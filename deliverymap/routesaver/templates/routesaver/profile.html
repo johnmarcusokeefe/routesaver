@@ -1,0 +1,17 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<div class="container p-2">
+    <div class="row mt-5">
+    <div class="col-6">
+           <h2>User Profile</h2>
+    </div>
+    <div class="col-6 p-1">
+        <p class="p-1">Username: {{ username }}</p>
+        <p class="p-1">Email: {{ email }}</p>
+        <p class="p-1">Last Login: {{ last_login }}</p>
+    </div>
+</div>
+{% endblock %}

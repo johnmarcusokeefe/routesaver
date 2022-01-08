@@ -1,0 +1,82 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+ <!-- upload company details -->
+  <div class="container-fluid">
+    <div class="row p-1 border-bottom">
+      <div class="col-10">
+        <h3>Company List</h3>
+      </div>
+      <div class="col-2 pt-2">
+      <button class="btn btn-sm btn-outline-secondary float-right" id="add-company-button">Add Company</button>
+      </div>
+    </div>
+     <!-- add company form -->
+      <div class="pb-3 pt-2 border-bottom" id="add-company-form">
+        <form action="{% url 'list_companies' %}" method="POST">
+          {% csrf_token %}
+          <label>Select Address:</label>
+          <select class="form-control mb-2 w-100" id="id-choice-field" name="address_id_new_company" >
+            <option value='none'>Default: No Address</option>
+            {% for address in address_list %}
+                <option value='{{ address.id }}'>{{ address.address1 }} {{ address.city }} {{ address.postcode }}</option>
+            {% endfor %}
+          </select>
+          {{ company_details_form.as_p }}
+         <input class="float-right p-2 pl-3 pr-3 mt-2" value="add" type="submit" />
+         <div class="clearboth"></div>
+        </form>
+      </div>
+      <!-- display company details -->
+      <div class="flex-container">
+        <div class="row border-bottom p-2 bg-light">
+          <div class="h5 col-4">Company Name</div>
+          <div class="h5 col-4">Address</div>
+          <div class="h5 col-4 text-right">Images</div>
+        </div>
+        {% if companies_list %} 
+        {% for detail in companies_list %}
+        <div class="row border-bottom p-2">
+          <div class="h6 col-4"><a href="/company_details/{{ detail.id }}/">{{detail.name}}</a></div>
+          {% if detail.address %}
+              <div class="col-6">{{detail.address.address1}} {{detail.address.city}} {{detail.address.postcode}} {{detail.address.country_region}}
+              </div>
+          {% else %}
+          <!-- if no address assigned select address for company -->
+          <form class="col-6" action="/list_companies/{{ detail.id }}/" method="POST">
+            {% csrf_token %}
+            <select class="form-control float-left" id="id-choice-field" name="address_id_listed_company">
+              <option value='none'>Add address:</option>
+              {% for address in address_list %}
+                  <option value='{{ address.id }}'>{{ address.address1 }} {{ address.city }} {{ address.postcode }}</option>
+              {% endfor %}
+            </select>
+            <input class="float-right p-1 pl-3 pr-3" value="add" type="submit" />
+          </form>
+          {% endif %}
+          <div class="col-2 text-right">Image Count: {{ detail.images.count }}</div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="p-2">Currently no company data</div>
+        {% endif %}
+      </div>
+      </div>
+  </div>
+</div>
+
+{% if company_id != "none" %}
+  <script>
+    document.querySelector("#add-company-form").style.display = "block";
+    choice = document.getElementById('id-choice-field');
+    choice.value = '{{ company_id }}'
+  </script>
+{% else %} 
+<script>
+  document.querySelector("#add-company-form").style.display = "none";
+  
+</script> 
+{% endif %}
+<script src="/static/js/add-company-form.js"></script>
+{% endblock %} 

@@ -1,0 +1,66 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+<!-- route -->
+<div class="flex-container">
+  <div class="d-flex border-bottom pt-2 m-0">
+    <div class="col-3">
+      <h3>Routes</h3>
+    </div>
+    <div class="col-9">
+      <button class="btn btn-sm btn-outline-secondary float-right" id="add-route">Add Route</button>
+    </div>
+  </div>
+  <div class="row border-bottom pb-2 m-0" id="route-input-container" >
+    <!-- form hidden on page load -->
+    <div class="add-route-form p-3">
+      <form class="bg-light" action="{% url 'route' %}" method="POST">
+        {% csrf_token %}
+        <h3>Add Route</h3>
+            {{ route_form.as_p }}
+          <label>Company/Address</label> 
+          <select name="company" multiple>
+            {% for company in company_list %}
+              {% if company.address.address1 %}
+              <option value="{{ company.id }}">{{ company.name }} - {{ company.address.address1 }}
+                 {{ company.address.suburb }} {{ company.address.postcode }}  {{ company.address.state }} {{ company.address.country_region }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <input class="btn btn-sm btn-primary"  id="address-save" type="submit" value="Add" >
+          <div class="clearboth"></div>
+      </form>
+    </div>
+    </div>
+</div>
+  <!-- list routes -->
+  <ul class="flex-container">
+  {% if route_list %}
+  <li class="bg-light row border-bottom pt-2 pb-1 pl-2 pr-2 m-0">
+  <p class="col-3 pl-3"><b>Route Name</b></p>
+  <p class="col-4"><b>Route Description</b></p>
+  <p class="col-3 text-center"><b>Destinations</b></p>
+  <div class="col-2">
+    <!-- <div class="material-icons pl-3">edit</div>
+     <div class="material-icons pl-1">delete</div>  -->
+  </div>
+  </li>
+  {% for route in route_list %}
+  <li class="row border-bottom pt-2 pb-2 pl-2 pr-2 m-0">
+    <div class="col-3">{{ route.route_name }}</div>
+    <div class="col-4">{{ route.route_notes }}</div>
+    <div class="col-3 text-center">{{ route.company.count }}</div>
+    <div class="col-2 text-right">
+        <a class="pl-3" id="edit-button" href="{% url 'edit_route' route.id %}"><span class="material-icons">edit</span></a>
+        <a class="pl-2 pr-1"  onclick="remove_route('{{route.id}}')"><span class="material-icons">delete_outline</span></a> 
+    </div>
+  </li>
+  {% endfor %}
+  {% else %}
+     <li class="p-3">No routes available</li>
+  {% endif %}
+  </ul>
+</div>      
+<script src="/static/js/page-nav-route.js"></script>         
+{% endblock %}

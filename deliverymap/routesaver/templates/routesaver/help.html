@@ -1,0 +1,132 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+<!-- display help text for the page that is logged in and open-->
+<h3>About</h3>
+<div class="card">
+    <div class="card-header">Introduction</div>
+    <div class="card-body">
+        <p class="card-text">This application is based on a role I used to work in as a commercial bulk parcel pickup driver. 
+            The cycle is pickup, return to base, sorted, and distributed to delivery centres. In this role 
+            the tools supplied were a spreadsheet each day with set routes that could vary with ad hoc jobs. Mostly through experience
+            jobs could be added or removed. But could also leave the run with excess time or overtime. In the job I used Google maps and 
+            recorded some routes using other apps. I was curious to see how this could be brought together. Route planning combined with 
+            site maps, access etc and even contact information. So Routesaver is the result of that.
+        </p>
+        <p class="card-text">Some editing has been included for convienience where it is none destructable. But where information
+            can be losts as it deleting company entities with is only allowed under admin with the native Django interface.
+        </p>
+        <p class="card-text">For this project only the category of company is used to save time. And no specific roles like delivery 
+            was included because of the complexity. Mentioning that I can reflect the biggest issue was settling on what functionality to
+            include as mission creep was a major issue. What was interesting as a driver I never really struck the issues involved in calculating routes. And stumbling on the travelling salesman solutions
+            offered by Google solved this. It was relatively easy to use their libraries after creating a distance matrix.  
+        </p>
+    </div>
+</div>
+<!-- opens minimised -->
+<div id="help-cards">
+<div class="card">
+    <div class="card-header">Load Route/Homepage </div>
+    <div class="card-body">
+        <h5 class="card-title">Show active route</h5>
+        <p class="card-text">Routes are a collection of addresses and created in the Routes menu. First the Google distance matrix is used to create a table of distance and a table of duration. Then is calculated for a most effecienct outcome using Google libraries based on travelling saleperson model. Some Google maps options can be used to vary the outcome. Tolls and Travel Model. Tolls avoid/not. Travel mode settings return calculations based
+            on history contained in the Google system that allows for a range of scenarios. As with Google maps leaving time can be set otherwise the default is 'now'. 
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Addresses</div>
+    <div class="card-body">
+        <h5 class="card-title">Addresses</h5>
+        <p class="card-text">Addresses when added can be used by all users. Addresses are added by using Google places to verify the address.</p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Routes</div>
+    <div class="card-body">
+        <h5 class="card-title">Routes</h5>
+        <p class="card-text">Routes are saved for each user. Routes are just a colletion of addresses. No calculations are made during this point. A map with pins 
+            allows for simple feedback for example if an address was in the wrong country. Or outside an expected area.
+        </p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Companies</div>
+    <div class="card-body">
+        <h5 class="card-title">Companies</h5>
+        <p class="card-text">Companies is for site knowledge. Contact. Images of access. Site maps. And instructions. As a platform this 
+            data I thought would be very valueable to capture. Especially knowledge that could easily be lost with individuals.
+        </p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Upload</div>
+    <div class="card-body">
+        <h5 class="card-title">File upload</h5>
+        <p class="card-text"> 
+            For this file allows images related to company sites to be uploaded.
+          
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">System Requirements</div>
+    <div class="card-body">
+        <h5 class="card-title">System Requirements</h5>
+        <p class="card-text">
+            <h3>API Links</h3>
+            <p>Google Places API</p>
+            <p>Google Maps API</p>
+            
+            <h3>Python Requirements</h3>
+            <p>Python OR-Tools</p>
+            <p>Python Googlemaps</p>
+         
+        </p>
+        <ul>
+            <h4>So knowledge built in:</h4>
+           <li>Google Maps Javascript API for visual representation.</li>
+           <li>Google Maps Python API for distance matrixes creation.</li>
+           <li>Google OR-Tools for route planning.</li>
+        </ul>
+        <ul>
+        <h4>Issues:</h4> 
+            <li>Cost of Google Maps - there is a free tier but I had issues that caused some cost blowout.</li> 
+            <li>User input. While testing would be ideal user experience would depend on the role of the person.</li>
+            <li>Address delection at this point is destructive. Only the images would remain in the case that a company was created. So only admin can delete.</li>
+            <li>Users may be allocted as a driver id as different drivers can do the same route.</li>
+            <li>Companies and Addresses could be unlinked so a company can exist.</li>
+        </ul>
+    </div>
+</div>
+</div>
+<script>
+//
+function show_hide(item) {
+  
+  if (item.style.display === "none") {
+    item.style.display = "block";
+  } else {
+    item.style.display = "none";
+  }
+}
+var card_elements = document.querySelector('#help-cards');
+all_cards = card_elements.querySelectorAll('.card');
+
+const button = document.createElement('button');
+button.className = "float-right";
+button.innerHTML = "x";
+// add show/hide button
+all_cards.forEach(element => {
+    const button = document.createElement('button');
+    button.className = "float-right";
+    button.innerHTML = "x";
+    var card_body = element.querySelector('.card-body');
+    button.onclick = function() {
+        show_hide(card_body);
+    };
+    card_body.style.display = "none";
+    element.querySelector('.card-header').append(button);
+    console.log(element.querySelector('.card-body'));
+});
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+<!-- input -->
+<div class="container-fluid m-0 p-0">
+<!-- list addresses -->
+  <div class="row border-bottom p-0 m-0"> 
+  <div class="col-10">
+    <h2>Addresses</h2>
+  </div>
+  <div class="col-2 pt-2">
+  <button class="btn btn-sm btn-outline-secondary float-right" id="add-address-button">Add Address</button>
+  </div>
+  </div>
+  <div class="border-bottom pt-2 pb-2" id="add-address-form">
+  <form action="{% url 'address' %}" method="POST">
+    {% csrf_token %}
+    <h2>Address Input Form</h2>
+    {{ address_form.as_p }}
+    <input class="btn btn-sm btn-outline-secondary mt-4" id="address-save" type="submit" value="add" >
+    <div class="clearboth"></div>
+  </form>
+  </div>
+
+  <div class="container-fluid p-0 m-0" id="addresses">
+  {% if address_list %}
+    <div class="bg-light row border-bottom pt-2 pb-1 p-0 m-0">
+      <div class="h5 col-3">Company</div>
+      <div class="h5 col-5">Address/Map Link</div>
+      <div class="h5 col-1 p-0 m-0">State</div>
+      <div class="h5 col-2 p-0 m-0 text-center">Postcode</div>
+      <div class="h5 col-1 p-0 m-0">Country</div>
+      <!-- user as admin -->
+      <!-- <div class="col-1 text-center"><span class="material-icons">delete</span></div> -->
+    </div>
+    <!-- page initial load -->
+  {% else %}
+    <div class="p-3">No addresses available</div>
+  {% endif %}
+    </div>
+
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCazYnxjbQJQ_LwrIYGy2PHwxrTASV0X6g&callback=initAutocomplete&libraries=places&v=weekly" async>
+</script>
+<script>
+  load_addresses();
+</script>
+<script src="/static/js/add-address-form.js"></script>
+{% endblock %}

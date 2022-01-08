@@ -1,0 +1,402 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: medium;
+}
+form {
+  margin: auto;
+}
+input {
+  border: 1px solid lightgray;
+  border-radius: 5px;
+}
+input[type=checkbox] {
+  float: left;
+}
+input[type=radio] {
+  display: block;
+  float: left;
+}
+input[type=select] {
+  display: block;
+  float: left;
+}
+p {
+  margin: 0;
+  padding: 2px;
+}
+/* forms */
+p input {
+    width: 100%;
+    
+}
+p label {
+  width: 100%;
+}
+select {
+  border: 1px solid lightgray;
+  border-radius: 0.5px;
+}
+table {
+  width: 100%;
+}
+textarea {
+  width: 100%;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+}
+li {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* custom */
+.action-menu {
+  width: 100%;
+}
+.action-menu .nav-item {
+  width: 33.3333%;
+}
+.action-menu button{
+  width: 100%;
+}
+.active-route {
+  width: 100%;
+}
+/* background bootstrap 4 card header*/
+.add-company-form select {
+  margin: auto;
+  padding: 8px;
+  border-radius: 5px;
+  border: 0.5 solid lightgray;
+}
+/* background bootstrap 4 card header*/
+
+#add-file-form {
+  width: 50%;
+  margin: auto;
+  margin-top: 100px;
+  padding: 20px;
+}
+.address-list {
+  list-style: none;
+}
+#address-save {
+  width: 20%;
+  float: right;
+}
+.address-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.address-container {
+  width: 100%;
+}
+.bottom-row {
+  width: 100%;
+  border-bottom: 1px dotted gray;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.center {
+  margin: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.control-row {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: medium;
+}
+.clearboth {
+  clear: both;
+}
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.date-time {
+  display: block;
+  height: 30px;
+  border-radius: 5px;
+  margin: auto;
+  float: left;
+  border: 1px solid lightgray;
+}
+#date-picker {
+  width: 220px;
+}
+.fake-link {
+  cursor: pointer;
+  color: rgb(50, 161, 252);
+  text-decoration: underline;
+}
+.fake-link:hover {
+  opacity: 0.5;
+}
+#help-list {
+  display: none;
+}
+#id-choice-field {
+  width: 80%;
+}
+#id_city {
+  width: 100%;
+}
+#id_file {
+  width: 100%;
+}
+#id_title {
+  width: 100%;
+}
+#id_postcode {
+  width: 100%;
+}
+#id_state {
+  width: 100%;
+}
+#id_country_region {
+  width: 100%;
+}
+#id_place_id {
+  background: rgb(230, 229, 229);
+  border: 1px solid lightgrey;
+}
+#id_place_url {
+  background: rgb(230, 229, 229);
+  border: 1px solid lightgrey;
+}
+.label-marker {
+  margin-left: 50px;
+}
+.list-container {
+  width: 97%;
+  margin: auto;
+}
+#map {
+  height: 80vh;
+}
+span.material-icons {
+  padding: 0;
+  margin: 0;
+  font-size: 18pt;
+}
+#modal {
+  display: none;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 5vh; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 90%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+.modal-header {
+  padding: 2px 16px;
+  background-color: white;
+  color: gray;
+}
+.nav-link {
+  margin-top: 2px;
+  padding: 0;
+}
+.page-title {
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.radio-buttons input[type=radio] {
+  margin-top: 6px;
+}
+.route-options div {
+  display: inline-block;
+  margin: auto;
+  display: block;
+}
+#route-addresses {
+   list-style: none;
+}
+#route-map {
+  height: 400px;
+}
+.route-stats {
+  border: 1px dotted gray;
+  background: rgb(155, 155, 155);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  color: white;
+  font-size: medium;
+}
+.route-options {
+  background: lightgray;
+}
+.route-options div {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.save-button {
+  width: 10%;
+}
+/* required to make buttons equal in height */
+#select-company-id {
+  padding: 8px;
+}
+/* .stats {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.stats div {
+  display: block;
+  padding: 5px;
+  text-align: left;
+} */
+.tolls input[type=checkbox] {
+  margin-top: 6px;
+}
+.top-row {
+  width: 100%;
+  border-bottom: 1px dotted gray;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: rgb(233, 233, 233);
+}
+#username {
+  text-transform: capitalize;
+}
+.ul-route-list {
+  width: 100%;
+}
+.vert-div {
+  border-right: 1px solid white;
+}
+.vertical-divider {
+  border-left: 1px solid grey;
+}
+/* responsive */
+/* Extra small devices (portrait phones, less than 576px)
+ No media query since this is the default in Bootstrap
+
+Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) { 
+  #add-address-form {
+    width: 100%;
+    color: gray;
+  }
+  #add-address-form form {
+    width: 100%;
+    margin: auto;
+    padding: 30px;
+    border-radius: 5px;
+    border: 0.5px solid lightgray;
+    background: rgba(0,0,0,.03);
+  }
+  .add-route-form form {
+    border: 1px solid lightgray;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+  }
+  .add-route-form input {
+    width: 100%;
+  }
+  .add-route-form textarea {
+    height: 100px;
+  }
+  .add-route-form select {
+    width: 100%;
+  }
+  .add-company-form form {
+    width: 100%;
+    margin: auto;
+    padding: 30px;
+    border-radius: 5px;
+    border: 0.5px solid lightgray;
+    background: rgba(0,0,0,.03);
+  }
+  
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) { 
+  #add-address-form {
+    width: 100%;
+    color: gray;
+  }
+  #add-address-form form {
+    width: 100%;
+
+  }
+  #add-route-form form {
+    width: 100%;
+  }
+  #add-company-form form {
+    width: 100%;
+    margin: auto;
+    padding: 30px;
+    border-radius: 5px;
+    border: 0.5px solid lightgray;
+    background: rgba(0,0,0,.03);
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  #add-address-form {
+    width: 100%;
+    color: gray;
+  }
+  #add-address-form form {
+    width: 80%;
+
+  }
+  #add-company-form form {
+    width: 80%;
+
+  }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+  #add-address-form {
+    width: 100%;
+    color: gray;
+  }
+  #add-address-form form {
+    width: 70%;
+    margin: auto;
+  }
+  #add-route-form form {
+    width: 70%;
+  }
+  #add-company-form form {
+    width: 50%;
+   
+  }
+  
+}

@@ -1,0 +1,39 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- route -->
+{% if user.is_authenticated %}
+<div class="container-fluid">
+  <h3>{{ route_name }}. Route ID: <span id="route-id">{{route_id}}</span></h3>
+      
+        <div class="form-group row border-bottom p-3">
+        <select class="form-control" id="select-company" onchange="route_add_company('{{route_id}}')")>
+          <!-- <option value='default'>Company to add:</option> -->
+          <!-- loaded from javascript -->
+        </select>
+        </div>
+        <!-- lists the addresses in the route -->
+        <div class="row">
+          <div class="col-8">
+        <ul class="container-fluid" id="route-companies"></ul>
+        </div>
+        <div class="col-4">
+          <h3>map</h3>
+          <div id="route-map"></div>
+          <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCazYnxjbQJQ_LwrIYGy2PHwxrTASV0X6g&callback=initRouteMap&v=weekly" async>
+        </script>
+        </div>
+    </div>
+</div>   
+        <!-- load addresses in route -->
+        <script src="/static/js/route-pins.js"></script>
+        <script type="text/javascript">
+          load_route_companies('{{ route_id }}');
+        </script>
+
+{% endif %}
+
+{% endblock %}

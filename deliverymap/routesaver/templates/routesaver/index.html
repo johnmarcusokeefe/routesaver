@@ -1,0 +1,100 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if user.is_authenticated %}
+{% if company_list %}
+<div class="flex-container">
+    <!-- load route to select -->
+  {% if routes %}
+  <div class="input-group">
+    <!-- load addresses for selection -->
+    <div class="input-group-prepend">
+      <label class="input-group-text">Select:</label>
+    </div>
+    <select class="custom-select" id="select-start" onchange="set_start_address(this)">
+      <option value='0'>1: Start Address</option>
+      {% for company in company_list %}
+          <option value='{{ company.address.place_id }}'>{{ company.name }} : {{ company.address.address1 }}</option>
+      {% endfor %}
+    </select>
+    <select class="custom-select" id="select-route" onchange="load_route_addresses('index', this.value)" disabled>
+      <option value='0'>2: Route</option>
+      {% for route in routes %}
+        <option value='{{route.id}}'>{{route.route_name}}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary float-right" id="preview-button" disabled>Preview</button>
+  </div>
+  {% else %}
+  <p>Currently no routes</p>
+  {% endif %}
+</div>
+<div class="container-fluid">
+  <div class="row">
+    
+    <div class="tolls col-lg-2 col-md-3 input-group-text">
+      <div class="row mx-auto">
+          <div class="label pr-2">Avoid Tolls</div>
+          <input type="checkbox" id="tolls" name="tolls" checked/>
+      </div>
+    </div>
+    <div class="radio-buttons col-lg-6 col-md-9 input-group-text">
+      <div class="row mx-auto">
+      <div class="label pr-2">Travel Model:</div>
+      <input type="radio" id="best-guess" name="travel-model" value="best_guess" checked>
+      <div class="label pl-1 pr-2" for="best-guess">Best Guess</div>
+      <input type="radio" id="pessimistic" name="travel-model" value="pessimistic">
+      <div class="label pl-1 pr-2" for="pessimistic">Pessimistic</div>
+      <input type="radio" id="optimistic" name="travel-model" value="optimistic">
+      <div class="label pl-1 pr-2" for="optimistic">Optimistic</div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12 input-group-text">
+      <div class="row mx-auto">
+      <div class="label pr-1">Depart:</div>
+      <input id="date-picker"/>
+    </div>
+    </div>
+
+  </div>
+</div>
+<div class="container input-group-text mt-3" id="stats">
+  <div class="row border-bottom p-2">
+    <span id="start-address" hidden></span>
+    <div class="col-3">Route: <span id="route-display"></span></div>
+    <div class="col-3">Company: <span id="company-display"></span></div>
+    <div class="col-6">Start: <span id="start-address-display"></span></div>
+ </div>
+  <div class="row p-2">
+    <div class="col-3">start: <span id="start-time"></span></div>
+    <div class="col-3">total hrs: <span id="total-travel-time"></span></div>
+    <div class="col-3">total kms: <span id="total-distance"></span></div>
+    <div class="col-3">finish: <span id="finish-time"></span></div>
+  </div>
+</div>
+{% endif %}
+{% else %}
+      <p>Currently no addresses</p>
+{% endif %}
+<!-- display section -->
+<!-- placeholder for rendering addresses in active route -->  
+<div id="active-route">
+  <div class="p-5 text-center" id="homepage-banner">Routesaver</div>
+</div>
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCazYnxjbQJQ_LwrIYGy2PHwxrTASV0X6g&callback=initMap&libraries=places&v=weekly" async></script>
+<!-- display route map with waypoints in modal window-->
+<div id="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Route Map</h2>
+      <span class="close">&times;</span>
+    </div>
+    <div id="map"></div>
+    
+  </div>
+</div>
+<script src="/static/js/active-route.js"></script>
+<script src="/static/js/active-map-route-pins.js"></script>
+{% endblock %}
