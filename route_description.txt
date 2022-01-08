@@ -1,0 +1,21 @@
+route.html - add route
+
+form action="{% url 'route' %}"
+calls route in view
+
+{% url 'edit_route' route.id %} to call edit_route view
+
+
+
+edit_route.html - add and remove companies
+
+
+load_route_companies('{{ route_id }}');
+
+onchange="route_add_company('{{route_id}}')
+
+
+
+route.js
+
+route_remove_company(route_id, company_id);
