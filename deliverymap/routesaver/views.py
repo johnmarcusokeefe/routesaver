@@ -361,9 +361,7 @@ def load_route_companies(request, route_id):
             companies_not_in_route.append(company)
             print("company not in list", company['id'])
             
-    
-    print("companies not and route list", len(companies_not_in_route), len(route_list))
-    
+    #print("companies not and route list", len(companies_not_in_route), len(route_list))
     
     data_array = [ list(companies_not_in_route), list(route_list)]
 
