@@ -9,12 +9,12 @@
       <h3>Routes</h3>
     </div>
     <div class="col-9">
-      <button class="btn btn-sm btn-outline-secondary float-right" id="add-route">Add Route</button>
+      <button class="btn btn-sm btn-outline-secondary float-right" id="add-route"  onclick="toggle_display('#route-form-container')">Add Route</button>
     </div>
   </div>
-  <div class="row border-bottom pb-2 m-0" id="route-input-container" >
+  <div class="row border-bottom pb-2 m-0" id="route-form-container" >
     <!-- form hidden on page load -->
-    <div class="add-route-form p-3">
+    <div class="add-route-form p-3" id="add-route-form">
       <form class="bg-light" action="{% url 'route' %}" method="POST">
         {% csrf_token %}
         <h3>Add Route</h3>
@@ -62,5 +62,8 @@
   {% endif %}
   </ul>
 </div>      
-<script src="/static/js/page-nav-route.js"></script>         
+<script src="/static/js/toggle-form-display.js"></script>
+<script>
+  document.querySelector("#route-form-container").style.display = "none";
+</script>          
 {% endblock %}

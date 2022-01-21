@@ -1,4 +1,3 @@
-
 //
 // load addresses
 //
@@ -46,12 +45,15 @@ function load_addresses() {
 // delete address
 //
 function delete_address(id){
+  const csrftoken = getCookie('csrftoken');
 
   data = {'address_id':id};
   console.log("function remove", data);
 
   fetch("address", {
     method: 'DELETE',
+    headers: {'X-CSRFToken': csrftoken},
+    mode: 'same-origin', // Do not send CSRF token to another domain.
     body: JSON.stringify(data),
   })
   .then(response => response.json())
@@ -70,11 +72,14 @@ function delete_address(id){
 // address
 //
 function edit_address(id){
+  const csrftoken = getCookie('csrftoken');
 
   data = {'address_id':id};
 
   fetch("address", {
     method: 'PUT',
+    headers: {'X-CSRFToken': csrftoken},
+    mode: 'same-origin', // Do not send CSRF token to another domain.
     body: JSON.stringify(data),
   })
   .then(response => response.json())
@@ -176,11 +181,11 @@ function address_list(address) {
 //
 // toggle display by id
 //
-function toggle_display(id) {
-  item_to_toggle = document.getElementById(id);
-  if (item_to_toggle.style.display === "none") {
-    item_to_toggle.style.display = "block";
-  } else {
-    item_to_toggle.style.display = "none";
-  }
-}
+// function toggle_display(id) {
+//   item_to_toggle = document.getElementById(id);
+//   if (item_to_toggle.style.display === "none") {
+//     item_to_toggle.style.display = "block";
+//   } else {
+//     item_to_toggle.style.display = "none";
+//   }
+// }

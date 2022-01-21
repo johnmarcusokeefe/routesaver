@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json, googlemaps, os
-from .functions import build_distance_matrix, build_duration_matrix, handle_uploaded_file, print_solution
+import mimetypes
+from .functions import build_distance_matrix, build_duration_matrix, create_route_csv, handle_uploaded_file, print_solution
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
@@ -17,7 +18,6 @@ from .forms import AddressForm, CompanyForm, FileUploadForm, RouteForm
 #
 # Create your views here.
 # 
-@csrf_exempt
 def index(request):
     #
     # a new model is created for the active route this allows actions to be taken during the run
@@ -45,19 +45,19 @@ def index(request):
         # have to get companies
         
         route_destination_object = Route.objects.get(id=route_id)
-        route_destination_list = route_destination_object.company.values('id','name','stopover','address__id','address__address1','address__place_id','address__lat_lng','address__place_url')
-        
+        route_destination_list = route_destination_object.company.values('id','name','stopover','address__id','address__address1','address__city','address__postcode','address__state','address__place_id','address__lat_lng','address__place_url')
       
-        route_start_address = Company.objects.filter(address__place_id=origin_id).values('id','name','stopover','address__id','address__address1','address__place_id','address__lat_lng','address__place_url')
+        route_start_address = Company.objects.filter(address__place_id=origin_id).values('id','name','stopover','address__id','address__address1','address__city','address__postcode','address__state','address__place_id','address__lat_lng','address__place_url')
 
-        print("route start address", route_start_address)
+        #print("route start address", route_start_address)
         # create an array were the route order set by index
         for start_address in route_start_address:
             route_destination_list_array = [start_address]
         # construct the list of data for display    
         for data in route_destination_list:
             print("rdla 59",route_destination_list_array)
-            if data['id'] == route_destination_list_array[0]['id']:
+            # remove start address if exists and companies wo addresses
+            if data['id'] == route_destination_list_array[0]['id'] or data['address__id'] == None:
                 print("address in route matched start")
             else:
                 route_destination_list_array.append(data)
@@ -80,7 +80,7 @@ def index(request):
             # test and excludes duplicate if start address is in route
             if (start_address[0]['id'] != address['address__id']):
                 address_ids.append(address['address__id'])
-                # adds first place url if not origin
+                
 
         # convert queryset to listprint("address ids",address_ids)
         matrix_addresses = []
@@ -92,10 +92,12 @@ def index(request):
         matrix_addresses.append(start_address)
 
         for line in route_destination_list:
-            print("97", line)
-            # tests for duplication of start address
-            if origin_id != line['address__place_id']:
-                matrix_addresses.append("place_id:"+line['address__place_id'])
+            print("96", line['address__place_id'])
+            # only add companies that contain an address
+            if line['address__place_id'] != None:
+                # tests for duplication of start address
+                if origin_id != line['address__place_id']:
+                    matrix_addresses.append("place_id:"+line['address__place_id'])
         print("****************")
         print("matrix addresses",matrix_addresses) 
         print("****************")       
@@ -199,19 +201,23 @@ def index(request):
         # needs start address
         
         for item in destination_list_index:
-            print(item)
+            print("dest item",item)
             destination_data.append(route_destination_list_array[item])
         
-        print("****************")    
-        print("original data resorted",item, destination_data)
-        print("****************")
+        # print("****************")    
+        # print("original data resorted",item, destination_data)
+        # print("****************")
 
         if len(destination_list_index) > 2:
             data_out = {"destination_data": destination_data, "distance":distance, "duration":duration}
         else:
             data_out = {"destination_data": [], "distance":[], "duration":[]}
   
-        #print("data out",json.dumps(data_out, indent=4))
+        print("data out",json.dumps(data_out, indent=4))
+        # csv
+        print("data out length", len(data_out))
+        if len(destination_list_index) > 2:
+            create_route_csv(route_id, data_out)
 
         return JsonResponse(data_out, safe=False)
     
@@ -239,9 +245,9 @@ def get_place_id(request, id):
  
     return JsonResponse(list(place_id), safe=False)
     
-
+#
 # create a route and set as current route to add addresses
-@csrf_exempt
+#
 @login_required
 def route(request, route_id="none"):
 
@@ -279,8 +285,6 @@ def route(request, route_id="none"):
     # without using values() template displays the value of the model name  
     route_list = Route.objects.filter(user=request.user)
 
-    #print("route list", route_list)
-
     return render(request, "routesaver/route.html", {
         'route_list': route_list,
         'route_form': route_form,
@@ -290,7 +294,6 @@ def route(request, route_id="none"):
 
 #
 # edit route addresses after added
-@csrf_exempt
 @login_required
 def edit_route(request, route_id):
 
@@ -302,7 +305,6 @@ def edit_route(request, route_id):
         # get the address id from the post value
         route.company.add(company)
         route.save()
-
     # #
     if request.method == "DELETE":
         company_id = json.load(request)['company_id']
@@ -312,10 +314,8 @@ def edit_route(request, route_id):
         route.company.remove(company)
         route.save()
    
-
     route_values = list(Route.objects.filter(id=route_id).values())
     route_list = Company.objects.all().values('id','name','address__id','address__address1','address__postcode')
-    
     
     if request.method == "GET":    
         print("get")
@@ -333,7 +333,6 @@ def edit_route(request, route_id):
 # the aim of using the drop down list to pick the route and display without 
 # reloading page
 #
-@csrf_exempt
 @login_required
 def load_route(request, route_id):
     
@@ -392,7 +391,6 @@ def load_addresses(request):
 
 # process address input, addresses are checked for an existing location externally 
 # and if they exist in database. the are added to the database to allow saving routes
-@csrf_exempt
 @login_required
 def address(request):
     
@@ -520,6 +518,7 @@ def list_companies(request, company_id='none'):
 @login_required
 def show_company_details(request, company_id="none"):
 
+   
     company_list = Company.objects.all()
     company = "none"
     data = ["none"]
@@ -531,6 +530,7 @@ def show_company_details(request, company_id="none"):
         data = json.loads(request.body.decode("utf-8"))
         if data:
            id = data['company_id']
+           print("529", id)
         # displaying details
         if data:
             company_object = Company.objects.get(pk=id)
@@ -547,6 +547,7 @@ def show_company_details(request, company_id="none"):
             data = {'company_details' : "NoID"}
         # return json response    
         return JsonResponse(list(data), safe=False)
+
     # change stop value
     if request.method == "PUT":
         data = json.loads(request.body.decode("utf-8"))
@@ -559,23 +560,32 @@ def show_company_details(request, company_id="none"):
         print("put stop value", stop_value, company_id)
         # return the stop value to ajax update list
         #return JsonResponse(list(data), safe=False)
-
+    file_upload_form = FileUploadForm()
     # first load
     return render(request, "routesaver/company_details.html", {
         "company_list": company_list,
-        "company_id": company_id
+        "company_id": company_id,
+        "file_upload_form": file_upload_form
     })
 #
-#
+# delete address from company. command may be used for further editing 
 #
 @csrf_exempt
 @login_required
 def edit_company_details(request, company_id, command):
 
-    print(request, company_id, command)
-
+    
     company_list = Company.objects.all()
     company = Company.objects.get(pk=company_id)
+    # removes company from routes if does not contain an address
+    # routes = Route.objects.filter(company=company).values()
+    # for route in routes:
+    #     print("address in routes", route)
+    #     route_object = Route.objects.get(pk=route['id'])
+    #     route_object.company.remove(company)
+    
+        
+    # search and remove from routes
     #
     company.address = None
     company.save()
@@ -589,14 +599,18 @@ def edit_company_details(request, company_id, command):
 #
 @csrf_exempt
 @login_required
-def file(request, company_id="none"):
-
+def upload_file(request, company_id="none"):
+    
     company_list = Company.objects.all()
-
     # path is address id
     feedback = "Input details to upload file"
+   
+    print(request.POST)
     
     if request.method == 'POST':
+
+        company_id = request.POST.get('company-id', None)
+        company_name = request.POST.get('company-name', None)
 
         upload_form = FileUploadForm(request.POST, request.FILES)
         
@@ -615,25 +629,34 @@ def file(request, company_id="none"):
             #
             # add image to company
             #
-            company_id = request.POST['company-id']
+            #company_id = request.POST['company_id']
             company_object = Company.objects.get(pk=company_id)
             company_object.images.add(new_image)
             # 
             upload_form = FileUploadForm()
             
             # direct to choice of upload another or go to detail
-            feedback = "file uploaded successfully"     
+            feedback = "file uploaded successfully"   
+            print("upload", company_id)  
+            return render(request, "routesaver/company_details.html", {
+                "company_id": company_id,
+                "company_name": company_name,
+                "feedback": feedback,
+                "company_list": company_list,
+                "file_upload_form": upload_form
+            })
     else:
         upload_form = FileUploadForm()
+        print("error check")
+
         
-    return render(request, "routesaver/file.html", {
+    return render(request, "routesaver/upload_file.html", {
         "company_id": company_id,
         "feedback": feedback,
         "company_list": company_list,
         "file_upload_form": upload_form
     })
 #
-@csrf_exempt
 @login_required
 def file_delete(request, company_id, file_id):
 
@@ -654,7 +677,40 @@ def file_delete(request, company_id, file_id):
         "company_list": company_list,
         "feedback": feedback,
     })
+# download csv file
+def download_file(request, filename):
+    print(request)
 
+    # Define Django project base directory
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Define text file name
+    # Define the full file path
+    filepath = BASE_DIR + '/routesaver/media/csv/' + filename
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
+#
+# log displays saved route csvs
+#
+@csrf_exempt
+def log(request):
+
+    
+    path = os.getcwd() + "/routesaver/media/csv/"
+    route_csv_list = os.listdir(path)
+    #
+    
+    return render(request, "routesaver/log.html", {
+        "path": path,
+        "route_csv_list": route_csv_list
+    }) 
 #
 # help
 #

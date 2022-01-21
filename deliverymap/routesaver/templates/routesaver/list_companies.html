@@ -9,7 +9,7 @@
         <h3>Company List</h3>
       </div>
       <div class="col-2 pt-2">
-      <button class="btn btn-sm btn-outline-secondary float-right" id="add-company-button">Add Company</button>
+      <button class="btn btn-sm btn-outline-secondary float-right" onclick="toggle_display('#add-company-form')">Add Company</button>
       </div>
     </div>
      <!-- add company form -->
@@ -75,8 +75,7 @@
 {% else %} 
 <script>
   document.querySelector("#add-company-form").style.display = "none";
-  
 </script> 
 {% endif %}
-<script src="/static/js/add-company-form.js"></script>
+<script src="/static/js/toggle-form-display.js"></script>
 {% endblock %} 

@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   try {
     document.querySelector('#stats').style.display = "none";
+    document.querySelector('#start').style.display = "none";
   }
   catch {
     console.log("route.js not loaded");
@@ -38,6 +39,7 @@ async function route_load(route_id) {
 // gets the route data and creates a list to display either all 'index' or for the 'route'
 //
 function load_route_addresses(page, route_id) {
+  const csrftoken = getCookie('csrftoken');
   // banner labe value
   document.querySelector('#route-display').innerHTML = route_id;
   
@@ -58,7 +60,7 @@ function load_route_addresses(page, route_id) {
   // milliseconds
   const utc_departure_time = Date.UTC(d[0],d[1],d[2],t[0],t[1],0);
 
-  console.log("departure time", dt, new Date(departure_time).toString());
+  //console.log("departure time", dt, new Date(departure_time).toString());
   
   start_array = new Date(departure_time).toString().split(" ");
   let day_name = start_array[0];
@@ -76,8 +78,10 @@ function load_route_addresses(page, route_id) {
   // get data
   fetch('', {
       method: 'POST',
+      mode: 'same-origin', // Do not send CSRF token to another domain.
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
       },
       body: JSON.stringify(id_data),
   })
@@ -92,11 +96,13 @@ function load_route_addresses(page, route_id) {
        // data contains the address list to display
        if(data['destination_data'].length > 2) {
           document.querySelector('#stats').style.display = "block";
+          document.querySelector('#start').style.display = "block";
           document.querySelector('#preview-button').disabled = false;
           load_active(data);
           
        } else {
           document.querySelector('#stats').style.display = "none";
+          document.querySelector('#start').style.display = "none";
           const active_route = document.querySelector('#active-route');
           var banner = document.createElement('div');
           banner.className = "text-center p-5";
@@ -119,7 +125,6 @@ var previous_duration = 0;
 //
 function load_active(data) {
   // get the data values 
-  console.log("data 109",data)
   var stopover_value = 0;
   // 
   
@@ -212,7 +217,6 @@ function load_active(data) {
     var added_time = dur + departure_time + stopover_value;
     let full_date = new Date(added_time);
     let date_array = full_date.toString().split(" ");
-    console.log(date_array);
     day_name = date_array[0];
     month = date_array[1];
     day_number = date_array[2];

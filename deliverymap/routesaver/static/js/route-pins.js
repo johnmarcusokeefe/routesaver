@@ -22,15 +22,21 @@ function initRouteMap() {
   //
   function showMap() {
     deleteMarkers();
+    // clear markers array
+    markers = [];
     const route_stops = document.querySelector('#route-companies');
     const items = route_stops.getElementsByTagName("li");
+    console.log("items",items);
     
     for(var i = 0; i < items.length; i++) {
-      var latlng = items[i].dataset.latlng.split(",");
-      console.log("latlang", latlng);
-      // format lat lng 
-      var dict = {lat: parseFloat(latlng[0]), lng: parseFloat(latlng[1])};
-      addMarker(dict);
+      // test for null where address is removed from company
+      if(items[i].dataset.latlng != 'null') {
+          var latlng = items[i].dataset.latlng.split(",");
+          console.log("latlang", latlng);
+          // format lat lng 
+          var dict = {lat: parseFloat(latlng[0]), lng: parseFloat(latlng[1])};
+          addMarker(dict);
+      }
     };
     showMarkers();
   };

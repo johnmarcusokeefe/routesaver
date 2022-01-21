@@ -3,36 +3,17 @@
 {% block body %}
 <!-- input -->
 <div class="fluid-container">
-    <div class="row p-0 m-0">
-      <div class="col-6 p-0 m-0">
-      <form class="add-company-form">
-        {% csrf_token %}
-        <!-- company list of addresses wo company details attached -->
-        <select class="btn btn-outline-secondary w-100" id="select-company-id" onchange="company()">
-          <!-- <option value="display">Show Company Details</option> not required but left for testing-->
-        {% for company in company_list %}
-            {% if company.address %}
-            <option value="{{ company.id }}">{{ company.name }} : {{ company.address.address1 }} {{ company.address.city }} {{ company.address.postcode }}</option>
-            {% else %}
-            <option value="{{ company.id }}">{{ company.name }} : No Address</option>
-            {% endif %}
-        {% endfor %}
-        </select>
-      </form>
-      </div>
-      <div class="col-6 p-0 m-0">
-        <a class="btn btn-outline-secondary w-100" id="upload-file-button" href="/file/{{ company_id }}/">Upload Image</a>
-      </div>
-  </div>
-</div>
  <!-- display company details -->
-  <div class="flex-container mb-2 border-bottom" id="company-details"></div>
+  <div class="flex-container border-bottom" id="company-details"></div>
+  <div class="col-12 p-0 m-0 mx-auto border-bottom">
+    <form method="post" action="{% url 'upload_file' %}">
+      <input type="hidden" value="{{ company_id }}" name="company-id">
+      <input type="submit" class="btn btn-outline-secondary w-100"  value="Upload Image">
+    </form>
+  </div>
   <div class="flex-container border-bottom" id="company-images"></div>
-  {% if company_id %}
-      <script>
-        document.querySelector('#select-company-id').value='{{ company_id }}';
-        company();
-      </script>
-  {% endif %}
-  
+  <script>
+    company('{{ company_id }}');
+  </script>
+      
 {% endblock %} 

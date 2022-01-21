@@ -1,0 +1,14 @@
+{% extends "routesaver/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="p-5">
+<h3>Route CSV Log</h3>
+<p>CSV of active route</p>
+{% for file in route_csv_list %}
+   <p>File: <a href="{% url 'download_file' filename=file %}">{{file}}</a></p>
+{% endfor %}
+</div>
+
+{% endblock %}

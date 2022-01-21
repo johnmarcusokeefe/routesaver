@@ -10,7 +10,7 @@
     <h2>Addresses</h2>
   </div>
   <div class="col-2 pt-2">
-  <button class="btn btn-sm btn-outline-secondary float-right" id="add-address-button">Add Address</button>
+  <button class="btn btn-sm btn-outline-secondary float-right" onclick="toggle_display('#add-address-form')">Add Address</button>
   </div>
   </div>
   <div class="border-bottom pt-2 pb-2" id="add-address-form">
@@ -21,7 +21,7 @@
     <input class="btn btn-sm btn-outline-secondary mt-4" id="address-save" type="submit" value="add" >
     <div class="clearboth"></div>
   </form>
-  </div>
+</div>
 
   <div class="container-fluid p-0 m-0" id="addresses">
   {% if address_list %}
@@ -46,5 +46,9 @@
 <script>
   load_addresses();
 </script>
-<script src="/static/js/add-address-form.js"></script>
+<!-- <script src="/static/js/add-address-form.js"></script> -->
+<script src="/static/js/toggle-form-display.js"></script>
+<script>
+  document.querySelector("#add-address-form").style.display = "none";
+</script> 
 {% endblock %}

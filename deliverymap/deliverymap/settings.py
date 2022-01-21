@@ -126,7 +126,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 # Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'routesaver/media/')
+#print("media root",MEDIA_ROOT)
 
 # added by me
 

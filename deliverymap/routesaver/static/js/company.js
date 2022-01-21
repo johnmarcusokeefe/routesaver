@@ -1,13 +1,19 @@
 //
 // display company details
 //
-function company() {
 
-  var company_id = document.querySelector('#select-company-id').value;
+
+function company(company_id) {
+  
+  const csrftoken = getCookie('csrftoken');
+  
+
   var data = {'company_id': company_id};
-  console.log(data);
+  //console.log(data);
   fetch('/company_details/', {
     method: 'POST', // or 'PUT'
+    headers: {'X-CSRFToken': csrftoken},
+    mode: 'same-origin', // Do not send CSRF token to another domain.
     headers: {
       'Content-Type': 'application/json',
     },
@@ -15,7 +21,7 @@ function company() {
    })
   .then(response => response.json())
   .then(data => {
-      console.log('company success', data);
+      //console.log('company success', data);
            if(data['company_details'] == false){
                 console.log("no company details");
                 // stops display of previous selection data
@@ -40,77 +46,7 @@ function company() {
       console.error('Error:', error);
   });
 }
-//
-// save company details which could be text or images
-//
-function add_company() {
-   
-  var address_id = document.querySelector('#select-address-id').value;
-  //console.log("details company id", company_id);
 
-  var name = document.querySelector('#id_name').value;
-  var person = document.querySelector('#id_contact').value;
-  var phone = document.querySelector('#id_phone').value;
-  var instructions = document.querySelector('#id_instructions').value;
-  
-  var data = { company_name: name,
-                contact_person: person,
-                company_phone: phone,
-                instructions: instructions };
-
-  fetch('/company/'+address_id+"/", {
-    method: 'POST', // or 'PUT'
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-   })
-  .then(response => response.json())
-  .then(data => {
-      console.log('company success', data);
-           if(data['company_details'] == false){
-                console.log("no company details");
-                document.querySelector('#add-company-form').style.display = 'none';
-                // stops display of previous selection data
-                document.querySelector('#company-details').innerHTML = "";
-                document.querySelector('#company-images').innerHTML = "";
-           }
-           else {
-                document.querySelector('#company-details').innerHTML = "";
-                document.querySelector('#company-images').innerHTML = "";
-                load_company_details(data);
-           }
-           // clear the form data
-           document.querySelector('#id_name').value = "";
-           document.querySelector('#id_phone').value = "";
-           document.querySelector('#id_instructions').value = "";
-    })
-    .catch(error => {
-      console.error('Error:', error);
-  });
-}
-//
-// delete image
-//
-// function delete_image(image_id) {
-   
-  
-//   fetch('/file/'+image_id+"/", {
-//     method: 'DELETE', // or 'PUT'
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(data),
-//    })
-//   .then(response => response.json())
-//   .then(data => {
-//       console.log('company success', data);
-     
-//     })
-//     .catch(error => {
-//       console.error('Error:', error);
-//   });
-// }
 //
 // set stop duration
 //
@@ -137,15 +73,14 @@ function set_stop_value(stop_value, company_id) {
 // construct the details list
 //
 function load_company_details(data) {
-  address = data[0][0]
 
-  console.log("address", address['address1'])
+  address = data[0][0]
+  //console.log("data", data)
   // clean up data references
   detail_data = data[1];
   //
   image_data = data[2];
   
-
   //clean_data = data[0]['fields'];
   //console.log("company and image", detail_data, image_data);
     
@@ -266,7 +201,7 @@ function load_company_details(data) {
         stop_option.value = 0;
         stop_select.add(stop_option, 0);
         for(var i=0; i < stop_choice.length; i++){
-           console.log(stop_choice);
+           //console.log(stop_choice);
            const stop_option = document.createElement('option');
            stop_option.text = stop_choice[i] + " mins";
            stop_option.value = stop_choice[i];

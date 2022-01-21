@@ -16,11 +16,15 @@ function remove_route(route_id){
 var route_id = "";
 // view is setup to toggle
 function route_add_company(route_id) {
+    const csrftoken = getCookie('csrftoken');
+   
     company_id = document.getElementById("select-company").value;
     route_id=route_id;
     data = {'company_id': company_id}
         fetch('/edit_route/'+route_id+'/', {
             method: 'PUT',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin', // Do not send CSRF token to another domain.
             body: JSON.stringify(data),
         })
           .then(response => response.json())
@@ -40,9 +44,13 @@ function route_add_company(route_id) {
 // dynamically removes address from route
 //
 function route_remove_company(route_id, company_id) {
+    const csrftoken = getCookie('csrftoken');
+   
     data = {'company_id': company_id};
       fetch('/edit_route/'+route_id+'/', {
           method: 'DELETE',
+          headers: {'X-CSRFToken': csrftoken},
+          mode: 'same-origin', // Do not send CSRF token to another domain.
           body: JSON.stringify(data),
       })
         .then(response => response.json())
@@ -69,11 +77,15 @@ function add_options(option_list) {
       //console.log(option_list[i]);
       select_company.add(option);  
       for(var i = 0; i < option_list.length; i++){
-        const option = document.createElement("option");
-        option.value = option_list[i]['id'];
-        option.text = option_list[i]['name'] + " : " + option_list[i]['address__address1']+" "+option_list[i]['address__city'];
-        //console.log(option_list[i]);
-        select_company.add(option);  
+        // only companies with an address can be added
+        if(option_list[i]['address__address1'] != null) {
+          const option = document.createElement("option");
+          option.value = option_list[i]['id'];
+          option.text = option_list[i]['name'] + " : " + option_list[i]['address__address1']+" "+option_list[i]['address__city'];
+          //console.log(option_list[i]);
+          select_company.add(option);  
+        }
+        
     }
 };
 //
@@ -111,7 +123,7 @@ function create_route_company_list(company_list) {
     //
     // get the data values 
     const li = document.createElement('li');
-    li.className = "border-bottom row pb-2";
+    li.className = "border-bottom row p-2";
     li.dataset.latlng = company_list['address__lat_lng'];
     //
     const company_div = document.createElement('div');
@@ -122,6 +134,11 @@ function create_route_company_list(company_list) {
     let city = company_list['address__city'];
     let postcode  = company_list['address__postcode'];
     let address_text = company + ": "+street + " " + state +" "+ city +" "+ postcode;
+    if(company_list['address__address1'] == null) {
+      address_text = company + ": no address";
+      li.className = "border-bottom row text-danger p-2";
+    } 
+    //
     company_div.innerHTML = address_text;
     //
     li.append(company_div);

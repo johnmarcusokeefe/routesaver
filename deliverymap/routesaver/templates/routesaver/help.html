@@ -7,31 +7,18 @@
 <div class="card">
     <div class="card-header">Introduction</div>
     <div class="card-body">
-        <p class="card-text">This application is based on a role I used to work in as a commercial bulk parcel pickup driver. 
-            The cycle is pickup, return to base, sorted, and distributed to delivery centres. In this role 
-            the tools supplied were a spreadsheet each day with set routes that could vary with ad hoc jobs. Mostly through experience
-            jobs could be added or removed. But could also leave the run with excess time or overtime. In the job I used Google maps and 
-            recorded some routes using other apps. I was curious to see how this could be brought together. Route planning combined with 
-            site maps, access etc and even contact information. So Routesaver is the result of that.
+        <p class="card-text">How the App works
         </p>
-        <p class="card-text">Some editing has been included for convienience where it is none destructable. But where information
-            can be losts as it deleting company entities with is only allowed under admin with the native Django interface.
-        </p>
-        <p class="card-text">For this project only the category of company is used to save time. And no specific roles like delivery 
-            was included because of the complexity. Mentioning that I can reflect the biggest issue was settling on what functionality to
-            include as mission creep was a major issue. What was interesting as a driver I never really struck the issues involved in calculating routes. And stumbling on the travelling salesman solutions
-            offered by Google solved this. It was relatively easy to use their libraries after creating a distance matrix.  
-        </p>
+
     </div>
 </div>
-<!-- opens minimised -->
+<!-- opens minimised  when script is enabled -->
 <div id="help-cards">
 <div class="card">
     <div class="card-header">Load Route/Homepage </div>
     <div class="card-body">
         <h5 class="card-title">Show active route</h5>
-        <p class="card-text">Routes are a collection of addresses and created in the Routes menu. First the Google distance matrix is used to create a table of distance and a table of duration. Then is calculated for a most effecienct outcome using Google libraries based on travelling saleperson model. Some Google maps options can be used to vary the outcome. Tolls and Travel Model. Tolls avoid/not. Travel mode settings return calculations based
-            on history contained in the Google system that allows for a range of scenarios. As with Google maps leaving time can be set otherwise the default is 'now'. 
+        <p class="card-text">Routes are a collection of company addresses that first have to be added on the address and companies menu. Then is calculated for a most effecienct outcome using Google libraries based on travelling saleperson model. Some Google maps options can be used to vary the outcome. Tolls and Travel Model. Tolls avoid/not. Travel mode settings return calculations based on history contained in the Google system that allows for a range of scenarios. As with Google maps leaving time can be set otherwise the default is 'now'. 
     </div>
 </div>
 <div class="card">
@@ -99,7 +86,7 @@
     </div>
 </div>
 </div>
-<script>
+<!-- <script>
 //
 function show_hide(item) {
   
@@ -128,5 +115,5 @@ all_cards.forEach(element => {
     element.querySelector('.card-header').append(button);
     console.log(element.querySelector('.card-body'));
 });
-</script>
+</script> -->
 {% endblock %}

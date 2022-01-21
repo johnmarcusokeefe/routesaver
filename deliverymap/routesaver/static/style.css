@@ -77,7 +77,6 @@ ul {
   border: 0.5 solid lightgray;
 }
 /* background bootstrap 4 card header*/
-
 #add-file-form {
   width: 50%;
   margin: auto;
@@ -145,6 +144,11 @@ ul {
 }
 #help-list {
   display: none;
+}
+.homepage-banner {
+  padding-top: 150px;
+  text-align: center;
+  font-weight: lighter;
 }
 #id-choice-field {
   width: 80%;
@@ -266,6 +270,17 @@ span.material-icons {
 /* required to make buttons equal in height */
 #select-company-id {
   padding: 8px;
+}
+.site-title {
+  font-size: 36pt;
+  font-weight: 200;
+  color: black;
+}
+#stats {
+  display: block;
+}
+#start {
+  display: block;
 }
 /* .stats {
     width: 100%;

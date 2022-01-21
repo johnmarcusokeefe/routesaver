@@ -1,5 +1,6 @@
 # extra functions
 import os
+from django.core.files import File
 from datetime import datetime
 
 # check if address id directory exists and create if not then write 
@@ -75,3 +76,31 @@ def print_solution(manager, routing, solution):
     # my code
     index_array.append(0);
     return index_array
+#
+# create a csv of the current route
+#
+def create_route_csv(route_id, route_list_in):
+
+  file_date = datetime.now()
+  
+  route_list_data = []
+  path = os.getcwd() + "/routesaver/media/csv/"
+  for address in route_list_in['destination_data']:
+      route_list_data.append(address)
+  # remove return address
+  print("route list data pop", route_list_data)
+  route_list_data.pop()
+
+  with open(path+"routeid-"+route_id+"--"+file_date.strftime("%d.%m.%Y")+".csv", 'w') as f:
+      myfile = File(f)
+      header = "company name, address\n"
+      myfile.write(header)
+      for line in route_list_data:
+          print("line",line)
+          company_name = line['name']
+          address = line['address__address1'] + " "+  line['address__city']+ " " + line['address__state'] + " " + line['address__postcode']
+       
+          myfile.write(company_name + "," + address+"\n")
+  
+  myfile.closed
+  f.closed

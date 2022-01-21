@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
       <head>
-        <title>Route Saver</title>  
+        <title>Routesaver</title>  
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!-- Latest compiled and minified CSS -->
@@ -16,11 +16,12 @@
         <script src="/static/js/route.js"></script>
         <script src="/static/js/address.js"></script>
         <script src="/static/js/company.js"></script>
+        <script src="/static/js/get-cookie.js"></script>
       </head>
     <body> 
     <div class="header">
       <div class="float-left p-2">
-          <h1><a class="pl-2 pt-1" href="{% url 'index' %}">Routesaver</a></h1>
+          <h1><a class="pl-2 pt-1 site-title" href="{% url 'index' %}">[Routesaver]</a></h1>
       </div>
       <div class="right float-right p-2">
           {% if user.is_authenticated %}
@@ -58,9 +59,7 @@
                   <a class="nav-link" href="{% url 'list_companies'  %}">Companies</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'file' 'none' %}">
-                    <span class="material-icons">upload</span>
-                  </a>
+                  <a class="nav-link" href="{% url 'upload_file' %}">Upload</a>
                 </li>
                 {% endif %}
                 <li class="nav-item">
@@ -68,11 +67,19 @@
                     help
                     </span></a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link text-warning" href="{% url 'log' %}">log</a>
+                </li>
           </ul>
       </nav>
       <div class="clearboth"></div>
     </div>     
       {% block body %}
       {% endblock %}
+      
+      {% csrf_token %}
+      <script>
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      </script>
     </body>
 </html>   

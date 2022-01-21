@@ -35,6 +35,7 @@ function initMap() {
     }
     document.getElementById("preview-button").addEventListener('click', () => {
         calculateAndDisplayRoute(directionsService, directionsRenderer);
+        document.querySelector("#preview-button").disabled = true;
         setTimeout(function(){ showMap(map); }, 1000);
     })
 };

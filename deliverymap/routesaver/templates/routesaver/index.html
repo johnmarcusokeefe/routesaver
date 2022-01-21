@@ -7,7 +7,8 @@
 <div class="flex-container">
     <!-- load route to select -->
   {% if routes %}
-  <div class="input-group">
+  <form class="input-group">
+    {% csrf_token %}
     <!-- load addresses for selection -->
     <div class="input-group-prepend">
       <label class="input-group-text">Select:</label>
@@ -15,17 +16,19 @@
     <select class="custom-select" id="select-start" onchange="set_start_address(this)">
       <option value='0'>1: Start Address</option>
       {% for company in company_list %}
+          {% if company.address.address1 != null %}
           <option value='{{ company.address.place_id }}'>{{ company.name }} : {{ company.address.address1 }}</option>
+          {% endif %}
       {% endfor %}
     </select>
     <select class="custom-select" id="select-route" onchange="load_route_addresses('index', this.value)" disabled>
-      <option value='0'>2: Route</option>
+      ]<option value='0'>2: Route</option>
       {% for route in routes %}
         <option value='{{route.id}}'>{{route.route_name}}</option>
       {% endfor %}
     </select>
     <button class="btn btn-primary float-right" id="preview-button" disabled>Preview</button>
-  </div>
+   </form>
   {% else %}
   <p>Currently no routes</p>
   {% endif %}
@@ -59,20 +62,25 @@
 
   </div>
 </div>
-<div class="container input-group-text mt-3" id="stats">
-  <div class="row border-bottom p-2">
-    <span id="start-address" hidden></span>
-    <div class="col-3">Route: <span id="route-display"></span></div>
-    <div class="col-3">Company: <span id="company-display"></span></div>
-    <div class="col-6">Start: <span id="start-address-display"></span></div>
- </div>
+<div class="container input-group-text mt-3 mb-3 bg-light" id="stats">
+  <h5>Stats</h5>
   <div class="row p-2">
-    <div class="col-3">start: <span id="start-time"></span></div>
-    <div class="col-3">total hrs: <span id="total-travel-time"></span></div>
-    <div class="col-3">total kms: <span id="total-distance"></span></div>
-    <div class="col-3">finish: <span id="finish-time"></span></div>
+    <div class="col-3 text-left"><div class="pl-5">start: <span id="start-time"></span></div></div>
+    <div class="col-6 text-center">total hrs: <span id="total-travel-time"></span>
+    <br>total kms: <span id="total-distance"></span></div>
+    <div class="col-3 text-left">finish: <span id="finish-time"></span></div>
   </div>
 </div>
+<div class="container input-group-text h-2" id="start">
+  <h5>Start Point</h5>
+  <div class="row p-2">
+    <span id="start-address" hidden></span>
+    <div class="col-3">Company: <span id="company-display"></span></div>
+    <div class="col-6">Start Address: <span id="start-address-display"></span></div>
+    <div class="col-3">Route: <span id="route-display"></span></div>
+ </div>
+</div>
+
 {% endif %}
 {% else %}
       <p>Currently no addresses</p>
@@ -80,7 +88,7 @@
 <!-- display section -->
 <!-- placeholder for rendering addresses in active route -->  
 <div id="active-route">
-  <div class="p-5 text-center" id="homepage-banner">Routesaver</div>
+  <div class="homepage-banner" id="homepage-banner">[Routesaver]</div>
 </div>
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCazYnxjbQJQ_LwrIYGy2PHwxrTASV0X6g&callback=initMap&libraries=places&v=weekly" async></script>
@@ -96,5 +104,5 @@
   </div>
 </div>
 <script src="/static/js/active-route.js"></script>
-<script src="/static/js/active-map-route-pins.js"></script>
+<script src="/static/js/active-route-map-pins.js"></script>
 {% endblock %}
