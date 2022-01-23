@@ -1,13 +1,10 @@
 //
 // display company details
 //
-
-
 function company(company_id) {
   
   const csrftoken = getCookie('csrftoken');
   
-
   var data = {'company_id': company_id};
   //console.log(data);
   fetch('/company_details/', {

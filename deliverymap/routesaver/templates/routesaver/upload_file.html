@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-<h3>Upload File</h3>
+<h3 class="p-3">Upload File</h3>
 <form class="border" id="add-file-form" action="upload_file" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table>
@@ -17,14 +17,21 @@
         </td>
     {{ file_upload_form.as_table }}
     <th></th>
-    <td><input class="float-right" type="submit" value="upload" /></td>  
+    <td><input class="float-right" id="submit-file-button" type="submit" value="upload" disabled></td>  
     </table>
-    
     <div class="feedback text-right border-top w-100 mt-2">{{ feedback}}</div>
     <div class="clearboth"></div>
 </form>
 <script>
    document.querySelector('#select-company-name').value = '{{ company_id }}';
+   // enable button if form selection pre-filled
+   if('{{ company_id }}') {
+    document.querySelector('#submit-file-button').disabled = false;
+   }
+   // disable form until company is selected
+   document.querySelector('#select-company-name').addEventListener('change', function() {
+        document.querySelector('#submit-file-button').disabled = false;
+   });
 </script>
 
 {% endblock %} 

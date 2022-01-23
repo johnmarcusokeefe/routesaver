@@ -48,7 +48,6 @@ function load_route_addresses(page, route_id) {
   document.querySelector('#select-route').value = 0;
   const tolls = document.querySelector('#tolls').checked;
   var departure_time = document.querySelector('#date-picker').value;
-  console.log("active route 49", departure_time); 
   // display start time
   var start_time = document.querySelector('#start-time');
   var traffic_model = document.querySelector('input[name="travel-model"]:checked').value;
@@ -59,8 +58,6 @@ function load_route_addresses(page, route_id) {
 
   // milliseconds
   const utc_departure_time = Date.UTC(d[0],d[1],d[2],t[0],t[1],0);
-
-  //console.log("departure time", dt, new Date(departure_time).toString());
   
   start_array = new Date(departure_time).toString().split(" ");
   let day_name = start_array[0];

@@ -34,6 +34,8 @@ def build_duration_matrix(response):
   data['duration_matrix'] = duration_matrix
   data['num_vehicles'] = 1
   data['depot'] = 0
+
+  print("build duration matrix", data)
   return data
 
 

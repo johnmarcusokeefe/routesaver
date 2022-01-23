@@ -41,7 +41,7 @@ def index(request):
             tolls = ""
 
         # get the route address list wo the origin
-        print("departure time", departure_time)
+        #print("departure time", departure_time)
         # have to get companies
         
         route_destination_object = Route.objects.get(id=route_id)
@@ -49,7 +49,7 @@ def index(request):
       
         route_start_address = Company.objects.filter(address__place_id=origin_id).values('id','name','stopover','address__id','address__address1','address__city','address__postcode','address__state','address__place_id','address__lat_lng','address__place_url')
 
-        #print("route start address", route_start_address)
+        print("route destination list", route_destination_list, route_id)
         # create an array were the route order set by index
         for start_address in route_start_address:
             route_destination_list_array = [start_address]
@@ -98,6 +98,7 @@ def index(request):
                 # tests for duplication of start address
                 if origin_id != line['address__place_id']:
                     matrix_addresses.append("place_id:"+line['address__place_id'])
+
         print("****************")
         print("matrix addresses",matrix_addresses) 
         print("****************")       
@@ -207,7 +208,7 @@ def index(request):
         # print("****************")    
         # print("original data resorted",item, destination_data)
         # print("****************")
-
+        print("dest list index", len(destination_list_index))
         if len(destination_list_index) > 2:
             data_out = {"destination_data": destination_data, "distance":distance, "duration":duration}
         else:
@@ -235,7 +236,6 @@ def index(request):
     else:
         # Return an 'invalid login' error message.
         return render(request, "routesaver/login.html")
-
 #
 # get place id from saved address id
 #
@@ -510,7 +510,6 @@ def list_companies(request, company_id='none'):
         "companies_list": companies_list,
         "company_details_form": company_form
     })
-
 #
 # gets the company details and displays if they exist. it is called inline from the template
 #
@@ -701,11 +700,13 @@ def download_file(request, filename):
 #
 @csrf_exempt
 def log(request):
-
     
     path = os.getcwd() + "/routesaver/media/csv/"
     route_csv_list = os.listdir(path)
-    #
+    for i in range(len(route_csv_list)):
+        # remove items that contain a leading .
+        if route_csv_list[i][0] == ".":
+            route_csv_list.pop(i)
     
     return render(request, "routesaver/log.html", {
         "path": path,

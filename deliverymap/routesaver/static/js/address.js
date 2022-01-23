@@ -178,14 +178,3 @@ function address_list(address) {
 
     addresses.append(address_list);
 }
-//
-// toggle display by id
-//
-// function toggle_display(id) {
-//   item_to_toggle = document.getElementById(id);
-//   if (item_to_toggle.style.display === "none") {
-//     item_to_toggle.style.display = "block";
-//   } else {
-//     item_to_toggle.style.display = "none";
-//   }
-// }

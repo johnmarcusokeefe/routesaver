@@ -33,11 +33,17 @@ function initMap() {
    span.onclick = function() {
        modal.style.display = "none";
     }
-    document.getElementById("preview-button").addEventListener('click', () => {
+    try {
+      document.getElementById("preview-button").addEventListener('click', () => {
         calculateAndDisplayRoute(directionsService, directionsRenderer);
         document.querySelector("#preview-button").disabled = true;
         setTimeout(function(){ showMap(map); }, 1000);
     })
+    }
+    catch {
+      console.log("no routes loaded");
+    };
+    
 };
   //
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {

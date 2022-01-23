@@ -21,7 +21,6 @@ Your web application must be sufficiently distinct from the other projects in th
 The most common cause for failure of the final project is not spending enough effort on this next instruction. Read it completely. 
 
 Your README.md file should be minimally multiple paragraphs in length, and should provide a comprehensive documentation of 
-
 what you did and, if applicable, 
 
 why you did it. Ensure you allocate sufficient time and energy to writing a README.md that you are proud of and that documents your project thoroughly, and that distinguishes this project from others in the course and defends its complexity.

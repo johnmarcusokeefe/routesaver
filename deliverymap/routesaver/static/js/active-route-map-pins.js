@@ -22,10 +22,6 @@ var labelIndex = 1;
     for(var i = 0; i < destinations.length; i++) {
       destination_list[i] = destinations[i].dataset.end_address;
     };
-    //console.log("before", destination_list);
-    //last = destination_list.pop();
-    //destination_list.unshift(last);
-    //console.log("after", destination_list);
     //
     // add first to last
     //

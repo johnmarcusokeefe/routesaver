@@ -30,7 +30,7 @@
     <button class="btn btn-primary float-right" id="preview-button" disabled>Preview</button>
    </form>
   {% else %}
-  <p>Currently no routes</p>
+  <h6 class="text-center p-3">Currently no routes created!</h6>
   {% endif %}
 </div>
 <div class="container-fluid">
@@ -88,7 +88,9 @@
 <!-- display section -->
 <!-- placeholder for rendering addresses in active route -->  
 <div id="active-route">
-  <div class="homepage-banner" id="homepage-banner">[Routesaver]</div>
+  <div class="homepage-banner" id="homepage-banner">
+    <p class="text-center text-danger">Add Address -> Create Company with Address -> Create Route with Companies</p>
+  </div>
 </div>
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCazYnxjbQJQ_LwrIYGy2PHwxrTASV0X6g&callback=initMap&libraries=places&v=weekly" async></script>

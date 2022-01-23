@@ -1,0 +1,7 @@
+requirements:
+
+# used to calculate distance matrix server side. https://github.com/googlemaps/google-maps-services-python
+googlemaps==4.5.3
+
+# calculate the route order using the travelling salesman solution. https://developers.google.com/optimization
+ortools==9.1.9490

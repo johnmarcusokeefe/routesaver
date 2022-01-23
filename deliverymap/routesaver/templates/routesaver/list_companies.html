@@ -8,7 +8,7 @@
       <div class="col-10">
         <h3>Company List</h3>
       </div>
-      <div class="col-2 pt-2">
+      <div class="col-2 pt-1">
       <button class="btn btn-sm btn-outline-secondary float-right" onclick="toggle_display('#add-company-form')">Add Company</button>
       </div>
     </div>
@@ -30,17 +30,17 @@
       </div>
       <!-- display company details -->
       <div class="flex-container">
+        {% if companies_list %} 
         <div class="row border-bottom p-2 bg-light">
           <div class="h5 col-4">Company Name</div>
           <div class="h5 col-4">Address</div>
           <div class="h5 col-4 text-right">Images</div>
         </div>
-        {% if companies_list %} 
         {% for detail in companies_list %}
         <div class="row border-bottom p-2">
-          <div class="h6 col-4"><a href="/company_details/{{ detail.id }}/">{{detail.name}}</a></div>
+          <div class="h6 col-4 pt-2"><a href="/company_details/{{ detail.id }}/">{{detail.name}}</a></div>
           {% if detail.address %}
-              <div class="col-6">{{detail.address.address1}} {{detail.address.city}} {{detail.address.postcode}} {{detail.address.country_region}}
+              <div class="col-6 pt-1">{{detail.address.address1}} {{detail.address.city}} {{detail.address.postcode}} {{detail.address.country_region}}
               </div>
           {% else %}
           <!-- if no address assigned select address for company -->
@@ -52,10 +52,10 @@
                   <option value='{{ address.id }}'>{{ address.address1 }} {{ address.city }} {{ address.postcode }}</option>
               {% endfor %}
             </select>
-            <input class="float-right p-1 pl-3 pr-3" value="add" type="submit" />
+            <input class="ml-1 p-1 pl-3 pr-3 pt-1" value="add" type="submit" />
           </form>
           {% endif %}
-          <div class="col-2 text-right">Image Count: {{ detail.images.count }}</div>
+          <div class="col-2 text-right pt-2">Image Count: {{ detail.images.count }}</div>
         </div>
         {% endfor %}
         {% else %}
