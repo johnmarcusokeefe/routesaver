@@ -22,7 +22,7 @@ urlpatterns = [
     path('company_details/<str:company_id>/', views.show_company_details, name="show_company_details"),
     # delete address
     path('company_details/<str:company_id>/<str:command>/', views.edit_company_details, name="edit_company_details"),
-    path('get_place_id/<str:id>/', views.get_place_id),
+    #path('get_place_id/<str:id>/', views.get_place_id),
     path('profile', views.profile, name='profile'),
     path('log', views.log, name='log'),
     path('download/<str:filename>/', views.download_file, name='download_file' ),

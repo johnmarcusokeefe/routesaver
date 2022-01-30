@@ -74,7 +74,7 @@ ul {
   margin: auto;
   padding: 8px;
   border-radius: 5px;
-  border: 0.5 solid lightgray;
+  border: 0.5px solid lightgray;
 }
 /* background bootstrap 4 card header*/
 #add-file-form {
@@ -278,18 +278,12 @@ span.material-icons {
 #stats {
   display: block;
 }
+#stats table {
+  width: 100%;
+}
 #start {
   display: block;
 }
-/* .stats {
-    width: 100%;
-    margin-bottom: 20px;
-}
-.stats div {
-  display: block;
-  padding: 5px;
-  text-align: left;
-} */
 .tolls input[type=checkbox] {
   margin-top: 6px;
 }

@@ -34,6 +34,7 @@ def index(request):
         route_id = data['route_id']
         departure_time = data['departure_time']
         traffic_model = data['traffic_model']
+        print("traffic model", traffic_model)
         tolls = data['tolls']
         if tolls == True:
             tolls = 'tolls'
@@ -46,16 +47,15 @@ def index(request):
         
         route_destination_object = Route.objects.get(id=route_id)
         route_destination_list = route_destination_object.company.values('id','name','stopover','address__id','address__address1','address__city','address__postcode','address__state','address__place_id','address__lat_lng','address__place_url')
-      
         route_start_address = Company.objects.filter(address__place_id=origin_id).values('id','name','stopover','address__id','address__address1','address__city','address__postcode','address__state','address__place_id','address__lat_lng','address__place_url')
 
-        print("route destination list", route_destination_list, route_id)
+        
         # create an array were the route order set by index
         for start_address in route_start_address:
             route_destination_list_array = [start_address]
         # construct the list of data for display    
         for data in route_destination_list:
-            print("rdla 59",route_destination_list_array)
+            
             # remove start address if exists and companies wo addresses
             if data['id'] == route_destination_list_array[0]['id'] or data['address__id'] == None:
                 print("address in route matched start")
@@ -87,12 +87,11 @@ def index(request):
         # create place id strings
         # add origin address as 0 index is the start and finish point
         start_address = "place_id:"+ origin_id
-        #
         # start address at 0 and tested for in route
         matrix_addresses.append(start_address)
 
         for line in route_destination_list:
-            print("96", line['address__place_id'])
+        
             # only add companies that contain an address
             if line['address__place_id'] != None:
                 # tests for duplication of start address
@@ -114,36 +113,42 @@ def index(request):
             departure_time=departure_time,
             traffic_model=traffic_model,
         )
+        # seperates origin addresses for routing calculations
         matrix_response_origin_list = matrix_response['origin_addresses']
-        print("****************")
-        print("matrix response",matrix_response)
-        print("****************")
+
+        print("matrix response", json.dumps(matrix_response, indent=4))
 
         ################# google code
 
-        # Instantiate the data problem.
+        # Instantiate the data problem with a distance matrix.
         distance_data = build_distance_matrix(matrix_response)
 
-        # requires a condition
-        # if duration data = duration_data else ...
-        data = distance_data
+    
         # used to get durations only not used to calculate at this point
         duration_data = build_duration_matrix(matrix_response)
 
+         # if duration data = duration_data else ...
+        #if distance_data = true:
+        #data = distance_data
+        #else:
+        data = duration_data
+        
+        
         # Create the routing index manager.
-        manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
+        manager = pywrapcp.RoutingIndexManager(len(data['duration_matrix']),
                                             data['num_vehicles'], data['depot'])
         # Create Routing Model.
         routing = pywrapcp.RoutingModel(manager)
         #
-        def distance_callback(from_index, to_index):
-            """Returns the distance between the two nodes."""
+        def duration_callback(from_index, to_index):
+            # returns duration
             # Convert from routing variable Index to distance matrix NodeIndex.
             from_node = manager.IndexToNode(from_index)
             to_node = manager.IndexToNode(to_index)
-            return data['distance_matrix'][from_node][to_node]
+            return data['duration_matrix'][from_node][to_node]
         #    
-        transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+        #transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+        transit_callback_index = routing.RegisterTransitCallback(duration_callback)
 
         # Define cost of each arc.
         routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
@@ -160,11 +165,13 @@ def index(request):
         # Print solution on console
         if solution:
             destination_list_index = print_solution(manager, routing, solution)
-
+            # seperates the index component
             for index_value in destination_list_index:
                 destination_list.append(matrix_response_origin_list[index_value])
+            
+        
         print("****************")    
-        print(matrix_response_origin_list, destination_list)
+        print(destination_list_index, destination_list)
         print("****************")
 
         # this returns the address id for the list item in correct order after distance processing        
@@ -190,32 +197,32 @@ def index(request):
         # [38830, 20892, 9711, 0]
         #
         distance = []
-        duration = []
+        #duration = []
+        duration_in_traffic = []
+        print("duration_data",duration_data)
         for d in destination_pairs:
-            duration.append(duration_data['duration_matrix'][d[0]][d[1]] )
+            duration_in_traffic.append(duration_data['duration_matrix'][d[0]][d[1]] )
             distance.append(distance_data['distance_matrix'][d[0]][d[1]] )
 
         ################# google code
         # create the destination data list
         destination_data = []
-        
-        # needs start address
-        
+        #
+        # takes the calculated route indexes and creates new list using the destination data
+        #
         for item in destination_list_index:
-            print("dest item",item)
             destination_data.append(route_destination_list_array[item])
         
         # print("****************")    
         # print("original data resorted",item, destination_data)
         # print("****************")
-        print("dest list index", len(destination_list_index))
         if len(destination_list_index) > 2:
-            data_out = {"destination_data": destination_data, "distance":distance, "duration":duration}
+            data_out = {"destination_data": destination_data, "distance":distance, "duration_in_traffic":duration_in_traffic}
         else:
             data_out = {"destination_data": [], "distance":[], "duration":[]}
   
-        print("data out",json.dumps(data_out, indent=4))
-        # csv
+        
+        # csv route log file
         print("data out length", len(data_out))
         if len(destination_list_index) > 2:
             create_route_csv(route_id, data_out)
@@ -236,14 +243,14 @@ def index(request):
     else:
         # Return an 'invalid login' error message.
         return render(request, "routesaver/login.html")
+
 #
 # get place id from saved address id
 #
-def get_place_id(request, id):
-    
-    place_id = Address.objects.filter(id=id).values('place_id');
- 
-    return JsonResponse(list(place_id), safe=False)
+# def get_place_id(request, id):
+
+#     place_id = Address.objects.filter(id=id).values('place_id');
+#     return JsonResponse(list(place_id), safe=False)
     
 #
 # create a route and set as current route to add addresses
@@ -251,8 +258,6 @@ def get_place_id(request, id):
 @login_required
 def route(request, route_id="none"):
 
-    print("request method",request.method)
-    
     route_list = ""
     route_form = RouteForm()
     address_list = Address.objects.all()
@@ -373,13 +378,11 @@ def load_route_companies(request, route_id):
 def load_addresses(request):
         
     address_list = Address.objects.all().values()
-    #print("load addresses address list", address_list)
     #
     # search for companies attached to the addresses
     for address in address_list:
         
         co_id = Company.objects.filter(address__id=address['id']).values('id','name')
-
         if co_id:
             address['company_id'] = co_id[0]['id']
             address['company_name'] = co_id[0]['name']
@@ -573,7 +576,6 @@ def show_company_details(request, company_id="none"):
 @login_required
 def edit_company_details(request, company_id, command):
 
-    
     company_list = Company.objects.all()
     company = Company.objects.get(pk=company_id)
     # removes company from routes if does not contain an address
@@ -583,7 +585,6 @@ def edit_company_details(request, company_id, command):
     #     route_object = Route.objects.get(pk=route['id'])
     #     route_object.company.remove(company)
     
-        
     # search and remove from routes
     #
     company.address = None
@@ -647,7 +648,6 @@ def upload_file(request, company_id="none"):
     else:
         upload_form = FileUploadForm()
         print("error check")
-
         
     return render(request, "routesaver/upload_file.html", {
         "company_id": company_id,
@@ -670,7 +670,6 @@ def file_delete(request, company_id, file_id):
     else:
         feedback = "Image not removed"
     
-
     return render(request, "routesaver/company_details.html", {
         "company_id": company_id,
         "company_list": company_list,
@@ -678,7 +677,6 @@ def file_delete(request, company_id, file_id):
     })
 # download csv file
 def download_file(request, filename):
-    print(request)
 
     # Define Django project base directory
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -703,7 +701,8 @@ def log(request):
     
     path = os.getcwd() + "/routesaver/media/csv/"
     route_csv_list = os.listdir(path)
-    for i in range(len(route_csv_list)):
+    print(route_csv_list)
+    for i in range(len(route_csv_list)-1):
         # remove items that contain a leading .
         if route_csv_list[i][0] == ".":
             route_csv_list.pop(i)
@@ -732,7 +731,7 @@ def login_view(request):
         password = request.POST["password"]
 
         user = authenticate(request, username=username, password=password)
-        print("user", user, username, password)
+       
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -786,7 +785,6 @@ def profile(request):
     
         user_id = request.user.id
         current_user = User.objects.filter(id=user_id).values()
-        print(current_user)
 
         return render(request, "routesaver/profile.html", { 
             "username": current_user[0]['username'],

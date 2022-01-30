@@ -3,35 +3,32 @@
 
 {% block body %}
 <!-- display help text for the page that is logged in and open-->
-<h3>About</h3>
 <div class="card">
     <div class="card-header">Introduction</div>
     <div class="card-body">
-        <p class="card-text">How the App works
+        <p class="card-text">How the app works. Create a route from companies that have addresses attached on the relative pages. Load an origin address and select a route. 
+            Origins are always first and last. And skipped if part of the route. A preview of the route can be viewed in  a modal
+            window. No 1 marker is the first destination. The last is the origin as all routes return to origin.
         </p>
-
     </div>
 </div>
 <!-- opens minimised  when script is enabled -->
-<div id="help-cards">
+<!-- <div id="help-cards"> -->
 <div class="card">
-    <div class="card-header">Load Route/Homepage </div>
+    <div class="card-header">Load Route</div>
     <div class="card-body">
-        <h5 class="card-title">Show active route</h5>
         <p class="card-text">Routes are a collection of company addresses that first have to be added on the address and companies menu. Then is calculated for a most effecienct outcome using Google libraries based on travelling saleperson model. Some Google maps options can be used to vary the outcome. Tolls and Travel Model. Tolls avoid/not. Travel mode settings return calculations based on history contained in the Google system that allows for a range of scenarios. As with Google maps leaving time can be set otherwise the default is 'now'. 
     </div>
 </div>
 <div class="card">
     <div class="card-header">Addresses</div>
     <div class="card-body">
-        <h5 class="card-title">Addresses</h5>
         <p class="card-text">Addresses when added can be used by all users. Addresses are added by using Google places to verify the address.</p>
     </div>
 </div>
 <div class="card">
     <div class="card-header">Routes</div>
     <div class="card-body">
-        <h5 class="card-title">Routes</h5>
         <p class="card-text">Routes are saved for each user. Routes are just a colletion of addresses. No calculations are made during this point. A map with pins 
             allows for simple feedback for example if an address was in the wrong country. Or outside an expected area.
         </p>
@@ -40,7 +37,6 @@
 <div class="card">
     <div class="card-header">Companies</div>
     <div class="card-body">
-        <h5 class="card-title">Companies</h5>
         <p class="card-text">Companies is for site knowledge. Contact. Images of access. Site maps. And instructions. As a platform this 
             data I thought would be very valueable to capture. Especially knowledge that could easily be lost with individuals.
         </p>
@@ -49,43 +45,21 @@
 <div class="card">
     <div class="card-header">Upload</div>
     <div class="card-body">
-        <h5 class="card-title">File upload</h5>
         <p class="card-text"> 
             For this file allows images related to company sites to be uploaded.
+        </p>
           
     </div>
 </div>
 <div class="card">
-    <div class="card-header">System Requirements</div>
+    <div class="card-header">Log</div>
     <div class="card-body">
-        <h5 class="card-title">System Requirements</h5>
-        <p class="card-text">
-            <h3>API Links</h3>
-            <p>Google Places API</p>
-            <p>Google Maps API</p>
-            
-            <h3>Python Requirements</h3>
-            <p>Python OR-Tools</p>
-            <p>Python Googlemaps</p>
-         
+        <p class="card-text"> 
+            A list of downloadable csv files saved on route execution. 
         </p>
-        <ul>
-            <h4>Key lessons:</h4>
-           <li>Google Maps Javascript API for visual representation.</li>
-           <li>Google Maps Python API for distance matrixes creation.</li>
-           <li>Google OR-Tools for route planning.</li>
-        </ul>
-        <ul>
-        <h4>Issues:</h4> 
-            <li>Cost of Google Maps - there is a free tier but I had issues that caused some cost blowout.</li> 
-            <li>User input. While testing would be ideal user experience would depend on the role of the person.</li>
-            <li>Address delection at this point is destructive. Only the images would remain in the case that a company was created. So only admin can delete.</li>
-            <li>Users may be allocted as a driver id as different drivers can do the same route.</li>
-            <li>Companies and Addresses could be unlinked so a company can exist.</li>
-        </ul>
     </div>
 </div>
-</div>
+<!-- </div> -->
 <!-- <script>
 //
 function show_hide(item) {

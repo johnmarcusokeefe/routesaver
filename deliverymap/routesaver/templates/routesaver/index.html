@@ -4,35 +4,6 @@
 {% block body %}
 {% if user.is_authenticated %}
 {% if company_list %}
-<div class="flex-container">
-    <!-- load route to select -->
-  {% if routes %}
-  <form class="input-group">
-    {% csrf_token %}
-    <!-- load addresses for selection -->
-    <div class="input-group-prepend">
-      <label class="input-group-text">Select:</label>
-    </div>
-    <select class="custom-select" id="select-start" onchange="set_start_address(this)">
-      <option value='0'>1: Start Address</option>
-      {% for company in company_list %}
-          {% if company.address.address1 != null %}
-          <option value='{{ company.address.place_id }}'>{{ company.name }} : {{ company.address.address1 }}</option>
-          {% endif %}
-      {% endfor %}
-    </select>
-    <select class="custom-select" id="select-route" onchange="load_route_addresses('index', this.value)" disabled>
-      ]<option value='0'>2: Route</option>
-      {% for route in routes %}
-        <option value='{{route.id}}'>{{route.route_name}}</option>
-      {% endfor %}
-    </select>
-    <button class="btn btn-primary float-right" id="preview-button" disabled>Preview</button>
-   </form>
-  {% else %}
-  <h6 class="text-center p-3">Currently no routes created!</h6>
-  {% endif %}
-</div>
 <div class="container-fluid">
   <div class="row">
     
@@ -62,25 +33,125 @@
 
   </div>
 </div>
+<div class="flex-container">
+    <!-- load route to select -->
+  {% if routes %}
+  <form class="input-group">
+    {% csrf_token %}
+    <!-- load addresses for selection -->
+    <div class="input-group-prepend">
+      <label class="input-group-text">Select:</label>
+    </div>
+    <select class="custom-select" id="select-start" onchange="set_start_address(this)">
+      <option value='0'>1: Start Address</option>
+      {% for company in company_list %}
+          {% if company.address.address1 != null %}
+          <option value='{{ company.address.place_id }}'>{{ company.name }} : {{ company.address.address1 }}</option>
+          {% endif %}
+      {% endfor %}
+    </select>
+    <select class="custom-select" id="select-route" onchange="load_route_addresses('index', this.value)" disabled>
+      <option value='0'>2: Route</option>
+      {% for route in routes %}
+        <option value='{{route.id}}'>{{route.route_name}}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary float-right" id="preview-button" disabled>Preview</button>
+   </form>
+  {% else %}
+  <h6 class="text-center p-3">Currently no routes created!</h6>
+  {% endif %}
+</div>
 <div class="container input-group-text mt-3 mb-3 bg-light" id="stats">
-  <h5>Stats</h5>
   <div class="row p-2">
-    <div class="col-3 text-left"><div class="pl-5">start: <span id="start-time"></span></div></div>
-    <div class="col-6 text-center">total hrs: <span id="total-travel-time"></span>
-    <br>total kms: <span id="total-distance"></span></div>
-    <div class="col-3 text-left">finish: <span id="finish-time"></span></div>
+    <div class="col-3">
+      <table class="table table-bordered text-left">
+        <thead>
+          <tr>
+            <th class="text-center" scope="col" colspan="2">Start</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Time</th>
+            <td ><span id="start-time"></span></td>
+          </tr>
+          <tr>
+            <th scope="row">Date</th>
+            <td><span id="start-date"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-6 text-center">
+      <table class="table table-bordered text-left">
+        <thead>
+          <tr>
+            <th class="text-center" scope="col" colspan="2">Statistics</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Road Time</th>
+            <td ><span id="total-road-time"></span></td>
+          </tr>
+          <tr>
+            <th scope="row">Stopovers</th>
+            <td><span id="total-stop-time"></span></td>
+          </tr>
+          <tr>
+            <th scope="row">Combined Travel Time</th>
+            <td ><span id="total-combined-travel-time"></span></td>
+          </tr>
+          <tr>
+            <th scope="row">Distance (kms)</th>
+            <td ><span id="total-distance"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-3 text-left">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="text-center" scope="col" colspan="2">Finish</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Time</th>
+            <td ><span id="finish-time"></span></td>  
+          </tr>
+          <tr>
+            <th scope="row">Date</th>
+            <td><span id="finish-date"></span></td>       
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <div class="container input-group-text h-2" id="start">
-  <h5>Start Point</h5>
-  <div class="row p-2">
-    <span id="start-address" hidden></span>
-    <div class="col-3">Company: <span id="company-display"></span></div>
-    <div class="col-6">Start Address: <span id="start-address-display"></span></div>
-    <div class="col-3">Route: <span id="route-display"></span></div>
- </div>
+  <table class="table table-bordered text-left">
+    <thead>
+      <tr>
+        <th class="text-center" scope="col" colspan="6">
+        <span class="material-icons float-left">maps_home_work</span>Route Origin</th>
+        <span id="start-address" hidden></span>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Company</th>
+        <td scope="row" ><span id="company-display"></span></td>  
+        <th scope="row">Address</th>
+        <td scope="row"><span id="start-address-display"></span></td>       
+        <th scope="row">Route</th>
+        <td scope="row"><span id="route-display"></span></td>       
+      </tr>
+    </tbody>
+  </table>
 </div>
-
 {% endif %}
 {% else %}
       <p>Currently no addresses</p>
@@ -89,7 +160,7 @@
 <!-- placeholder for rendering addresses in active route -->  
 <div id="active-route">
   <div class="homepage-banner" id="homepage-banner">
-    <p class="text-center text-danger">Add Address -> Create Company with Address -> Create Route with Companies</p>
+    <p class="text-center text-danger">Add Addresses -> Create Companines with an Address -> Create Route and add Companies</p>
   </div>
 </div>
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
@@ -102,7 +173,6 @@
       <span class="close">&times;</span>
     </div>
     <div id="map"></div>
-    
   </div>
 </div>
 <script src="/static/js/active-route.js"></script>

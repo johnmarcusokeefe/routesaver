@@ -28,7 +28,7 @@ def build_duration_matrix(response):
   
   for row in response['rows']:
     #row_list = [row['elements'][j]['duration']['text'] for j in range(len(row['elements']))]
-    row_list = [row['elements'][j]['duration'] for j in range(len(row['elements']))]
+    row_list = [row['elements'][j]['duration_in_traffic'] for j in range(len(row['elements']))]
     duration_matrix.append(row_list)
     
   data['duration_matrix'] = duration_matrix
@@ -92,13 +92,12 @@ def create_route_csv(route_id, route_list_in):
   # remove return address
   print("route list data pop", route_list_data)
   route_list_data.pop()
-
+  #
   with open(path+"routeid-"+route_id+"--"+file_date.strftime("%d.%m.%Y")+".csv", 'w') as f:
       myfile = File(f)
       header = "company name, address\n"
       myfile.write(header)
       for line in route_list_data:
-          print("line",line)
           company_name = line['name']
           address = line['address__address1'] + " "+  line['address__city']+ " " + line['address__state'] + " " + line['address__postcode']
        

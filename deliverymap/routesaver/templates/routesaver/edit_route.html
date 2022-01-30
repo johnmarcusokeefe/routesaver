@@ -6,8 +6,8 @@
 <!-- route -->
 {% if user.is_authenticated %}
 <div class="container-fluid">
-  <h3>{{ route_name }}. Route ID: <span id="route-id">{{route_id}}</span></h3>
-      
+  <h3>Route Name: {{ route_name }}</h3>
+  <span id="route-id" hidden>{{route_id}}</span>
         <div class="form-group row border-bottom p-3">
         <select class="form-control" id="select-company" onchange="route_add_company('{{route_id}}')")>
           <!-- <option value='default'>Company to add:</option> -->

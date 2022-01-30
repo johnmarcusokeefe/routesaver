@@ -50,6 +50,7 @@ function load_route_addresses(page, route_id) {
   var departure_time = document.querySelector('#date-picker').value;
   // display start time
   var start_time = document.querySelector('#start-time');
+  var start_date = document.querySelector('#start-date');
   var traffic_model = document.querySelector('input[name="travel-model"]:checked').value;
 
   dt = departure_time.split('T');
@@ -69,9 +70,11 @@ function load_route_addresses(page, route_id) {
   const id_data = {'route_id': route_id, 'origin_id': window.origin_id, 
       'departure_time': utc_departure_time, 'tolls':tolls, 'traffic_model':traffic_model};
 
+  //
   // display start time
-  //start_time.innerHTML = dt[1]+' - '+dt[0];
-  start_time.innerHTML = "<br>time: " + time + "<br>date: "+ day_name + ", " + day_number + " " + month + " " + year;
+  //
+  start_time.innerHTML = time;
+  start_date.innerHTML = day_name + ", " + day_number + " " + month + " " + year;
   // get data
   fetch('', {
       method: 'POST',
@@ -98,7 +101,7 @@ function load_route_addresses(page, route_id) {
           load_active(data);
           
        } else {
-          document.querySelector('#stats').style.display = "none";
+          //document.querySelector('#stats').style.display = "none";
           document.querySelector('#start').style.display = "none";
           const active_route = document.querySelector('#active-route');
           var banner = document.createElement('div');
@@ -114,19 +117,23 @@ function load_route_addresses(page, route_id) {
 };
 // address line
 //
-var dist = 0;
-var dur = 0;
-var previous_duration = 0;
+
 //
 // creates the address list in order on index.html
 //
 function load_active(data) {
   // get the data values 
+  var dist = 0;
+  var dur = 0;
+  var previous_duration = 0;
   var stopover_value = 0;
+  var stop_total = 0;
+  var road_time = 0
   // 
   
   // starts from 2nd address and origin set on banner
   var finish_time = document.querySelector('#finish-time');
+  var finish_date = document.querySelector('#finish-date');
   var start_time = document.querySelector('#start-time');
   start_value = start_time.innerHTML;
   // departure time from date picker
@@ -138,14 +145,31 @@ function load_active(data) {
     }
     else { 
     // stats
-    var total_travel_time = document.querySelector('#total-travel-time');
+    var total_travel_time = document.querySelector('#total-combined-travel-time');
     var total_distance = document.querySelector('#total-distance');
+    var stop_total_id = document.querySelector('#total-stop-time');
+    var road_time_id = document.querySelector('#total-road-time');
+    
+    
     previous_duration = dur;
     // data is seconds and multiplied by 1000 to create milliseconds. dur is seconds
-    dur = dur + data['duration'][i-1]['value']*1000;
+    //dur = dur + data['duration'][i-1]['value']*1000 + data['destination_data'][i]['stopover']*36000;
+
+    console.log("duration in traffic",data['duration_in_traffic'][i-1]['value']);
+
+    dur = dur + data['duration_in_traffic'][i-1]['value']*1000 + data['destination_data'][i]['stopover']*60000;
+
     dist = dist + data['distance'][i-1];
-    display_duration = dur/3600/1000;
-    total_travel_time.innerHTML = display_duration.toFixed(2) + " hrs";
+    display_duration = dur/60000;
+
+    total_travel_time.innerHTML = hours_and_minutes(display_duration);
+
+    stop_total = stop_total + parseInt(data['destination_data'][i]['stopover']);
+    road_time = road_time + data['duration_in_traffic'][i-1]['value']/60;
+
+    stop_total_id.innerHTML = hours_and_minutes(stop_total);
+    road_time_id.innerHTML = hours_and_minutes(road_time);
+
     // duration is in seconds and date uses milliseconds
     //
     // finish time 
@@ -158,7 +182,8 @@ function load_active(data) {
     let year = finish_array[3];
     let time = finish_array[4];
     
-    finish_time.innerHTML = "<br>time: " + time + "<br>date: "+ day_name + ", " + day_number + " " + month + " " + year;
+    finish_time.innerHTML = time;
+    finish_date.innerHTML = day_name + ", " + day_number + " " + month + " " + year;
 
     total_distance.innerHTML = (dist/1000).toFixed(2) + " kms";
     // arrows in between destinations
@@ -202,7 +227,12 @@ function load_active(data) {
     //
     const address_link = document.createElement('a');
     address_link.className = "col-8";
-    address_link.innerHTML = data['destination_data'][i]['address__address1'];
+    var street = data['destination_data'][i]['address__address1'];
+    var city = data['destination_data'][i]['address__city'];
+    var state = data['destination_data'][i]['address__state'];
+    var postcode = data['destination_data'][i]['address__postcode'];
+
+    address_link.innerHTML =  street + " " + city + " " + state + " " + postcode;
     address_link.href = data['destination_data'][i]['address__place_url'];
     address_link.target = "blank";
 
@@ -241,7 +271,9 @@ function load_active(data) {
     const travel_time = document.createElement('div');
     travel_time.id = "travel_time";
     travel_time.className = "col-3 float-left";
-    travel_time.innerText = data['duration'][i-1]['text'];
+    //travel_time.innerText = data['duration'][i-1]['text'];
+    // rounding
+    travel_time.innerText = data['duration_in_traffic'][i-1]['text'];
     travel_time.append(clock);
     
     // stopover is updated after as it is applied to the duration to the next stop
@@ -305,10 +337,10 @@ function set_start_address(address) {
     // test
     console.log("global origin id", window.origin_id);
     const start_address = document.querySelector('#start-address');
+    console.log("address value", address.value);
     start_address.innerHTML = address.value;
     const select_route = document.querySelector('#select-route');
     select_route.disabled = false;
-
 };
 //
 // set start address and enable route list
@@ -316,4 +348,13 @@ function set_start_address(address) {
 function orgin_place_id(id){
   // fetch code from saved data to lower google maps access
     origin_id = id;
+};
+//
+// convert minutes to hours and minutes
+//
+function hours_and_minutes(minutes_in) {
+
+  const hours = Math.floor(minutes_in/60);
+  const minutes = minutes_in%60;
+  return hours+" hrs " + Math.round(minutes)+" mins";
 };
