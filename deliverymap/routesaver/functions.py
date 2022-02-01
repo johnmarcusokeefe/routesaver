@@ -31,13 +31,13 @@ def build_duration_matrix(response):
   data = {}
   
   for row in response['rows']:
-    # catch duration_in_traffic key error
+    # duration in traffic is not always available
     try:
         row_list = [row['elements'][j]['duration_in_traffic'] for j in range(len(row['elements']))]
-        duration_matrix.append(row_list)
     except:
-        print("build duration error, length/rowlist", len(row['elements']), row_list)
- #
+        row_list = [row['elements'][j]['duration'] for j in range(len(row['elements']))]
+    duration_matrix.append(row_list)
+  #
   # duration matrix is accessed later to display on page durations. access is by index
   #   
   data['duration_matrix'] = duration_matrix

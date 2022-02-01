@@ -116,8 +116,7 @@ Add address and company. Either can be added first but only companies with addre
 Any other additional information the staff should know about your project.
 
 Running the application requires a Google cloud account. While there is seemingly large credits 
-included with the account with recent changes it is easy to rack up charges. If you require extensive 
-access please notify me on johnmarcusokeefe@gmail.com.
+included with the account with recent changes it is easy to rack up charges.
 
 The project requires information being feed in a pre planned way. Hence it is divided into processes add address/check address exists, create route/add address, remove addresses from routes.
 
@@ -133,7 +132,7 @@ My route using Google Maps Directions.
 
 Sydney -> Darwin -> Cairns -> Brisbane -> Sydney -> Melbourne -> Sydney
 
-Total kms: 11106  Total hours: 117.6
+Total kms: 11106  Total hours: 118
 
 Google OR-Tools Returned
 
@@ -155,11 +154,7 @@ Cost of accessing the Google Maps API for large routes.
 Limited editing. Creating Company and address at the same time for example. Changing details limited to built in
 admin options.
 
-11th hour glitch. At times I was getting a 'key not found' error on some data which was there. As the responses were 'ok' this
-seemed to be traced to a break in the data dict while iterating. The error only comes up very sporadically. Changed copy to use .copy() of the 
-orginal data and retyped function. Extremely hard to replicate.
 
+Summary:
 
-Note:
-
-This app has scope to expand with more features especially dynamic in nature. It is worth mentioning some of these. fuel stop options, multiple vehichles with dynamic route planning/allocation, live feedback, incident reporting, comprehensive logs, locational inputs. And so on. 
+This app only touches on what is possible for options in solving routing problems. It has scope to expand with more features especially dynamic in nature. It is worth mentioning some of these. fuel stop options, multiple vehichles with dynamic route planning/allocation, live feedback, incident reporting, comprehensive logs, locational inputs. And so on. Overall it was a great learning experience using Django and Javascript learnt in the course combined with using 3rd party APIs.

@@ -137,13 +137,9 @@ def index(request):
         ################# google code
         #print(json.dumps(matrix_response,indent=4))
         # Instantiate the data problem with a distance matrix.
-        print("before distance", matrix_response)
-        distance_data = build_distance_matrix(matrix_response.copy())
-        print("***********")
+        distance_data = build_distance_matrix(matrix_response)
         # used to get durations only not used to calculate at this point
-        print("after distance", matrix_response)
         duration_data = build_duration_matrix(matrix_response)
-
          # if duration data = duration_data else ...
         #if distance_data = true:
         data = distance_data
