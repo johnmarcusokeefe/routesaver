@@ -76,7 +76,8 @@ apps.py
 forms.py - AddressForm , CompanyForm, FileUploadForm, RouteForm, EditRouteForm - add and remove addresses
 functions.py - extra functions 
              - file upload
-             - duration matrix calculated for OR-Tools
+             - duration matrix. used for display data. 
+             - distance matrix calculated for OR-Tools.
              - print_solution function returns the original array in the sorted order. eg 0 -> 2 -> 1 -> 3 -> 0. 0 being the origin, create
              - csv log file for testing and backup of routes             
 models.py - Address, Route: has companies, Company: has addresses and images, Image
@@ -91,7 +92,7 @@ views.py
   def load_route(request, route_id): - loads route objects into active route
   def load_route_companies(request, route_id): - edit_route.html load companies for the route
   def load_addresses(request): - json call to load addresses
-  def address(request): - add addresses
+  def address(request): - add addresses, list addresses
   def list_companies(request, company_id='none'): - add and list companies
   def show_company_details(request, company_id="none"): - show company details including images
   def edit_company_details(request, company_id, command): - delete images
@@ -124,20 +125,41 @@ Also a Google cloud key is required to access their API. Currently there is a ke
 
 Note: All test data was created by searching local businesses who may or may not have pickups from my former employer. The origin is not a hub I know of and the addresses were just picked randomly by Google search.
 
+Simple Routing Test:
+
+I did a quick manual route calculation to compare to the OR-Tools. This was to Hilton Hotels in capital cities.
+
+My route using Google Maps Directions. 
+
+Sydney -> Darwin -> Cairns -> Brisbane -> Sydney -> Melbourne -> Sydney
+
+Total kms: 11106  Total hours: 117.6
+
+Google OR-Tools Returned
+
+Melbourne -> Darwin -> Cairns -> Brisbane -> Sydney
+
+Total kms: 9572  Total hours: 103
+
+From experience I think drivers could pick good routes over time. I may have been able to also come up with better figures with 
+a lot more research or with experience but think reflecting on a commercial environment and the 
+difference in quality of knowledge the Google routing tools are impressive.
+
+
 Issues: 
 
-25 stop limit using waypoints in Google maps. 
+10 stop limitation. Was kept to reduce possibility of charges. 
 
-Cost of accessing the Google Maps API.
+Cost of accessing the Google Maps API for large routes.
 
-Time to test with alternative routing methods.
+Limited editing. Creating Company and address at the same time for example. Changing details limited to built in
+admin options.
 
-Limited editing.
+11th hour glitch. At times I was getting a 'key not found' error on some data which was there. As the responses were 'ok' this
+seemed to be traced to a break in the data dict while iterating. The error only comes up very sporadically. Changed copy to use .copy() of the 
+orginal data and retyped function. Extremely hard to replicate.
 
-Limited information on route map.
 
-No backups and editing history. Some editing is left as admin function as a safety net.
+Note:
 
-Scope to add features:
-
-This app has scope to expand with more features especially dynamic in nature. It is worth mentioning some of these and there would be more. fuel stop options, multiple vehichles with dynamic route planning, live feedback, incident reporting, comprehensive logs.
+This app has scope to expand with more features especially dynamic in nature. It is worth mentioning some of these. fuel stop options, multiple vehichles with dynamic route planning/allocation, live feedback, incident reporting, comprehensive logs, locational inputs. And so on. 

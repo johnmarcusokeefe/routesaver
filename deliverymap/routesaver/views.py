@@ -91,64 +91,79 @@ def index(request):
         matrix_addresses.append(start_address)
 
         for line in route_destination_list:
-        
             # only add companies that contain an address
             if line['address__place_id'] != None:
+                #
                 # tests for duplication of start address
+                #
                 if origin_id != line['address__place_id']:
                     matrix_addresses.append("place_id:"+line['address__place_id'])
+                #
+                #***************************************
+                #
 
-        print("****************")
-        print("matrix addresses",matrix_addresses) 
-        print("****************")       
-
+        # print("****************")
+        # print("matrix addresses by place id",matrix_addresses) 
+        # print("****************")       
+        #
         # address 0 or the first in the route address list will the origin
-        matrix_response = gmaps.distance_matrix(
-            matrix_addresses,
-            matrix_addresses,
-            mode="driving",
-            language="en-AU",
-            avoid=tolls,
-            units="metric",
-            departure_time=departure_time,
-            traffic_model=traffic_model,
-        )
+        #
+        # test for max response
+        #
+        print("length of matrix addresses",len(matrix_addresses))
+        if len(matrix_addresses) < 10:
+            matrix_response = gmaps.distance_matrix(
+                matrix_addresses,
+                matrix_addresses,
+                mode="driving",
+                language="en-AU",
+                avoid=tolls,
+                units="metric",
+                departure_time=departure_time,
+                traffic_model=traffic_model,
+            )
+        else:
+            print("too many addresses for matrix")
+            route_list = Route.objects.filter(user=request.user)
+            company_list = Company.objects.all()
+
+            return render(request, "routesaver/index.html", {
+                "company_list": company_list,
+                "routes": route_list
+            })
         # seperates origin addresses for routing calculations
         matrix_response_origin_list = matrix_response['origin_addresses']
 
-        print("matrix response", json.dumps(matrix_response, indent=4))
-
         ################# google code
-
+        #print(json.dumps(matrix_response,indent=4))
         # Instantiate the data problem with a distance matrix.
-        distance_data = build_distance_matrix(matrix_response)
-
-    
+        print("before distance", matrix_response)
+        distance_data = build_distance_matrix(matrix_response.copy())
+        print("***********")
         # used to get durations only not used to calculate at this point
+        print("after distance", matrix_response)
         duration_data = build_duration_matrix(matrix_response)
 
          # if duration data = duration_data else ...
         #if distance_data = true:
-        #data = distance_data
+        data = distance_data
         #else:
-        data = duration_data
+        #data = duration_data
         
         
         # Create the routing index manager.
-        manager = pywrapcp.RoutingIndexManager(len(data['duration_matrix']),
+        manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
                                             data['num_vehicles'], data['depot'])
         # Create Routing Model.
         routing = pywrapcp.RoutingModel(manager)
         #
-        def duration_callback(from_index, to_index):
-            # returns duration
+        def distance_callback(from_index, to_index):
             # Convert from routing variable Index to distance matrix NodeIndex.
             from_node = manager.IndexToNode(from_index)
             to_node = manager.IndexToNode(to_index)
-            return data['duration_matrix'][from_node][to_node]
+            return data['distance_matrix'][from_node][to_node]
         #    
-        #transit_callback_index = routing.RegisterTransitCallback(distance_callback)
-        transit_callback_index = routing.RegisterTransitCallback(duration_callback)
+        transit_callback_index = routing.RegisterTransitCallback(distance_callback)
 
         # Define cost of each arc.
         routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
@@ -170,15 +185,17 @@ def index(request):
                 destination_list.append(matrix_response_origin_list[index_value])
             
         
-        print("****************")    
-        print(destination_list_index, destination_list)
-        print("****************")
-
+        # print("****************")    
+        # print("index line 174",destination_list_index, destination_list)
+        # print("****************")
+        
         # this returns the address id for the list item in correct order after distance processing        
         #
-        # the return address/start address added last        
-    
+        # the return address/start address added last      
+        #   
+        #
         #retrieve distances data is the list of values
+        #
         destination_pairs = []
         for i in range(len(destination_list_index)):
             # create tuples to access duration and distance tables   
@@ -187,6 +204,7 @@ def index(request):
                     destination_pairs.append([destination_list_index[i-1], destination_list_index[i]])
             except:
                 print("Error")
+        print("index line 190 destination pairs", destination_pairs)
         #
         # get distance or duration values using index from orgin and destination
         #
@@ -199,7 +217,7 @@ def index(request):
         distance = []
         #duration = []
         duration_in_traffic = []
-        print("duration_data",duration_data)
+        #print("duration_data",duration_data)
         for d in destination_pairs:
             duration_in_traffic.append(duration_data['duration_matrix'][d[0]][d[1]] )
             distance.append(distance_data['distance_matrix'][d[0]][d[1]] )
@@ -214,7 +232,7 @@ def index(request):
             destination_data.append(route_destination_list_array[item])
         
         # print("****************")    
-        # print("original data resorted",item, destination_data)
+        print("destination list index",destination_list_index)
         # print("****************")
         if len(destination_list_index) > 2:
             data_out = {"destination_data": destination_data, "distance":distance, "duration_in_traffic":duration_in_traffic}

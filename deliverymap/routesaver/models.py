@@ -46,7 +46,7 @@ class Company(models.Model):
     instructions = models.CharField(max_length=255, null=True)
     stopover = models.CharField(max_length=30, null=True)
     #
-    images = models.ManyToManyField('Image', symmetrical=False)
+    images = models.ManyToManyField('Image', symmetrical=False, blank=True)
     #
     address = models.ForeignKey(Address, on_delete=CASCADE, blank=True, null=True)
     added_by = models.ForeignKey(User, on_delete=CASCADE, null=True)

@@ -1,5 +1,9 @@
 # extra functions
+from distutils.log import error
+import json
+from logging import exception
 import os
+from textwrap import indent
 from django.core.files import File
 from datetime import datetime
 
@@ -27,15 +31,18 @@ def build_duration_matrix(response):
   data = {}
   
   for row in response['rows']:
-    #row_list = [row['elements'][j]['duration']['text'] for j in range(len(row['elements']))]
-    row_list = [row['elements'][j]['duration_in_traffic'] for j in range(len(row['elements']))]
-    duration_matrix.append(row_list)
-    
+    # catch duration_in_traffic key error
+    try:
+        row_list = [row['elements'][j]['duration_in_traffic'] for j in range(len(row['elements']))]
+        duration_matrix.append(row_list)
+    except:
+        print("build duration error, length/rowlist", len(row['elements']), row_list)
+ #
+  # duration matrix is accessed later to display on page durations. access is by index
+  #   
   data['duration_matrix'] = duration_matrix
   data['num_vehicles'] = 1
   data['depot'] = 0
-
-  print("build duration matrix", data)
   return data
 
 
@@ -46,9 +53,13 @@ def build_distance_matrix(response):
   data = {}
 
   for row in response['rows']:
-    row_list = [row['elements'][j]['distance']['value'] for j in range(len(row['elements']))]
-    distance_matrix.append(row_list)
-    
+    # for testing
+    try:
+        row_list = [row['elements'][j]['distance']['value'] for j in range(len(row['elements']))]
+        distance_matrix.append(row_list)
+    except:
+        print("build distance error", row_list)
+
   data['distance_matrix'] = distance_matrix
   data['num_vehicles'] = 1
   data['depot'] = 0
@@ -73,10 +84,13 @@ def print_solution(manager, routing, solution):
         route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
         
     plan_output += ' {}\n'.format(manager.IndexToNode(index))
-    print(plan_output)
+    
     plan_output += 'Route distance: {}miles\n'.format(route_distance)
-    # my code
-    index_array.append(0);
+    #
+    # appends the origin node to the list to allow return. this is to aways return/display the origin as the last destination
+    #
+    index_array.append(0)
+    # *****
     return index_array
 #
 # create a csv of the current route
@@ -90,7 +104,7 @@ def create_route_csv(route_id, route_list_in):
   for address in route_list_in['destination_data']:
       route_list_data.append(address)
   # remove return address
-  print("route list data pop", route_list_data)
+  #print("route list data pop", route_list_data)
   route_list_data.pop()
   #
   with open(path+"routeid-"+route_id+"--"+file_date.strftime("%d.%m.%Y")+".csv", 'w') as f:
